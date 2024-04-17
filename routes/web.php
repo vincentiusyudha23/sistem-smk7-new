@@ -45,6 +45,7 @@ Route::prefix('siswa')->as('siswa.')->group(function(){
     Route::view('/','siswa.page.login')->name('login');
     Route::view('/dashboard','siswa.page.dashboard.dashboard')->name('dashboard');
     Route::view('/ujian','siswa.page.ujian.ujian')->name('ujian');
+    Route::view('/soal-ujian','siswa.page.ujian.soal-ujian')->name('soal-ujian');
     Route::view('/presensi','siswa.page.presensi.presensi')->name('presensi');
 });
 
