@@ -18,11 +18,14 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return view('firstpage');
-});
+})->middleware('guest');
 
-Route::prefix('admin')->as('admin.')->group(function(){
+Route::middleware('guest')->prefix('admin')->as('admin.')->group(function(){
     Route::get('/login',[AdminController::class, 'login'])->name('login');
     Route::get('/register',[AdminController::class, 'register'])->name('register');
+});
+
+Route::middleware('auth')->prefix('admin')->as('admin.')->group(function(){
     Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/siswa',[AdminController::class, 'akun_siswa'])->name('siswa');
     Route::get('/mapel',[AdminController::class, 'akun_mapel'])->name('mapel');
