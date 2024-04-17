@@ -28,6 +28,7 @@ Route::middleware('guest')->prefix('admin')->as('admin.')->group(function(){
 Route::middleware('auth')->prefix('admin')->as('admin.')->group(function(){
     Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/siswa',[AdminController::class, 'akun_siswa'])->name('siswa');
+    Route::post('/store_siswa',[AdminController::class, 'store_siswa'])->name('siswa.store');
     Route::get('/mapel',[AdminController::class, 'akun_mapel'])->name('mapel');
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
 });

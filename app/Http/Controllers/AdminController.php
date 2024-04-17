@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
+use App\Models\Siswa;
+use App\Models\Jurusan;
+use App\Models\OrangTua;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -15,7 +20,9 @@ class AdminController extends Controller
     }
     public function index()
     {   
-        return view('admin.page.dashboard.dashboard');
+        $siswa = Siswa::pluck('id_siswa');
+
+        return view('admin.page.dashboard.dashboard', compact('siswa'));
     }
 
     public function register()
@@ -25,7 +32,11 @@ class AdminController extends Controller
 
     public function akun_siswa()
     {
-        return view('admin.page.siswa.kelola_siswa');
+        $kelas = Kelas::all();
+        $jurusan = Jurusan::all();
+        $siswas = Siswa::orderBy('created_at', 'asc')->with('kelas','jurusan','orangTua')->get();
+        
+        return view('admin.page.siswa.kelola_siswa', compact('kelas','jurusan','siswas'));
     }
 
     public function akun_mapel()
@@ -36,6 +47,31 @@ class AdminController extends Controller
     public function presensi()
     {
         return view('admin.page.presensi.kelola_presensi');
+    }
+
+    public function store_siswa(Request $request)
+    {
+        $orang_tua = OrangTua::create([
+            'nama' => $request->nama_orangtua,
+            'nomor_telepon' => $request->nomor_telepon
+        ]);
+
+        if($orang_tua){
+            Siswa::create([
+                'id_orangtua' => $orang_tua->id_orangtua,
+                'id_kelas' => $request->kelas,
+                'id_jurusan' => $request->jurusan,
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'nama' => $request->nama_siswa,
+                'nis' => $request->nis,
+                'tanggal_lahir' => $request->tanggal_lahir
+            ]);
+    
+            return response()->json(['success', 'Berhasil Membuat Akun Siswa']);
+        } else {
+            return response()->json(['error', 'Gagal Membuat Akun Siswa']);
+        }
     }
 
     /**

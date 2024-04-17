@@ -44,13 +44,13 @@
                     <div class="box-content-1 bg-blue-600 rounded-t-md">
                         <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 24 24"><path fill="currentColor" d="M15.71 12.71a6 6 0 1 0-7.42 0a10 10 0 0 0-6.22 8.18a1 1 0 0 0 2 .22a8 8 0 0 1 15.9 0a1 1 0 0 0 1 .89h.11a1 1 0 0 0 .88-1.1a10 10 0 0 0-6.25-8.19M12 12a4 4 0 1 1 4-4a4 4 0 0 1-4 4"/></svg>
                         <div class="text-center">
-                            <h1 class="text-4xl font-bold">300</h1>
+                            <h1 class="text-4xl font-bold">{{ count($siswa) }}</h1>
                             <h1>Total Siswa</h1>
                         </div>
                     </div>
                     <div class="box-content-2 text-blue-600">
                         <a>View Detail</a>
-                        <a>27/03/2024</a>
+                        <a>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</a>
                     </div>
                 </div>
                 <div class="box-detail border border-green-400 rounded-md">
@@ -63,7 +63,7 @@
                     </div>
                     <div class="box-content-2 text-green-400">
                         <a>View Detail</a>
-                        <a>27/03/2024</a>
+                        <a>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</a>
                     </div>
                 </div>
                 <div class="box-detail border border-yellow-400 rounded-md">
@@ -76,7 +76,7 @@
                     </div>
                     <div class="box-content-2 text-yellow-400">
                         <a>View Detail</a>
-                        <a>27/03/2024</a>
+                        <a>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</a>
                     </div>
                 </div>
             </div>
