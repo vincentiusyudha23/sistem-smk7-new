@@ -26,7 +26,7 @@
                 <div class="flex justify-center items-center mb-5">
                     <h1 class="text-blue-600 font-bold text-2xl w-32 text-center">Halaman Siswa</h1>
                 </div>
-                <a href="{{ route('siswa.login') }}" class="btn btn-primary mb-3 text-white text-lg">Masuk</a>
+                <a href="{{ route('login-siswa') }}" class="btn btn-primary mb-3 text-white text-lg">Masuk</a>
             </div>
         </div>
     </div>

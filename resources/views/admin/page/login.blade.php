@@ -40,10 +40,10 @@
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
-                    <div class="form-control mb-3">
-                       <label class="label cursor-pointer chx-pw">
+                    <div class="mb-3 py-2">
+                       <label class="cursor-pointer chx-pw inline-flex items-center">
                            <input type="checkbox" class="checkbox checkbox-primary" />
-                           <span class="label-text">Show Password</span> 
+                           <span class="ms-3">Show Password</span> 
                        </label>
                     </div>
 
