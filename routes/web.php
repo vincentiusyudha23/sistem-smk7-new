@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MapelController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,38 +16,47 @@ use App\Http\Controllers\ProfileController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::view('/', 'firstpage')->name('homepage');
 
-Route::get('/', function () {
-    return view('firstpage');
-})->middleware('guest');
+Route::middleware('guest')->group(function(){
+    
+    Route::prefix('admin')->as('admin.')->group(function(){
+        Route::get('/login',[AdminController::class, 'login'])->name('login');
+        Route::get('/register',[AdminController::class, 'register'])->name('register');
+    });
 
-Route::middleware('guest')->prefix('admin')->as('admin.')->group(function(){
-    Route::get('/login',[AdminController::class, 'login'])->name('login');
-    Route::get('/register',[AdminController::class, 'register'])->name('register');
+    Route::prefix('mapel')->as('mapel.')->group(function(){
+        Route::get('/login',[MapelController::class,'login'])->name('login');
+        Route::post('/login', [AuthenticatedSessionController::class, 'loginMapel']);
+    });
+    Route::prefix('siswa')->as('siswa.')->group(function(){
+        Route::view('/siswa/login','siswa.page.login')->name('login');
+        Route::post('/siswa/login', [AuthenticatedSessionController::class, 'loginSiswa']);
+    });
 });
 
-Route::middleware('auth')->prefix('admin')->as('admin.')->group(function(){
+Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(function(){
     Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/siswa',[AdminController::class, 'akun_siswa'])->name('siswa');
     Route::post('/store_siswa',[AdminController::class, 'store_siswa'])->name('siswa.store');
+    Route::post('/store_mapel',[AdminController::class, 'store_mapel'])->name('mapel.store');
     Route::get('/mapel',[AdminController::class, 'akun_mapel'])->name('mapel');
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
 });
     
-Route::prefix('mapel')->as('mapel.')->group(function(){
-    Route::get('/',[MapelController::class,'login'])->name('login');
+Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){
     Route::get('/dashboard',[MapelController::class,'index'])->name('dashboard');
     Route::get('/sesiujian',[MapelController::class,'sesi_ujian'])->name('sesi-ujian');
     Route::get('/soal-ujian',[MapelController::class,'soal_ujian'])->name('soal-ujian');
     Route::get('/hasil-ujian',[MapelController::class,'hasil_ujian'])->name('hasil-ujian');
 });
 
-Route::prefix('siswa')->as('siswa.')->group(function(){
-    Route::view('/','siswa.page.login')->name('login');
+Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(function(){
     Route::view('/dashboard','siswa.page.dashboard.dashboard')->name('dashboard');
     Route::view('/ujian','siswa.page.ujian.ujian')->name('ujian');
     Route::view('/soal-ujian','siswa.page.ujian.soal-ujian')->name('soal-ujian');
     Route::view('/presensi','siswa.page.presensi.presensi')->name('presensi');
+    Route::view('/riwayat-presensi','siswa.page.presensi.riwayat-presensi')->name('riwayat-presensi');
 });
 
 Route::get('/dashboard', function () {

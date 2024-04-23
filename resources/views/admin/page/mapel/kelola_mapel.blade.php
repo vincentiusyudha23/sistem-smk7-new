@@ -35,6 +35,29 @@
                     }
                 });
             })
+
+            $(document).on('submit', '#form-mapel', function(e){
+                e.preventDefault();
+                var el = $(this);
+                var data = new FormData(this);
+                var spinner = '<span class="loading loading-spinner loading-sm"></span>';
+                var btn_save = $('#save-btn');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('admin.mapel.store') }}',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function(response){
+                        toastr.success(response.msg);
+                        el.reset();
+                    },
+                    error: function(response){
+                        toastr.error(response.msg);
+                    }
+                })
+            });
         })
     </script>
 @endpush

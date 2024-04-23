@@ -22,7 +22,9 @@
                         <th>{{ $loop->index + 1 }}</th>
                         <td>{{ $siswa->nama }}</td>
                         <td>{{ $siswa->nis }}</td>
-                        <td>{{ $siswa->tangal_lahir }}</td>
+                        <td>
+                            {{ date('d-m-Y', strtotime($siswa->tanggal_lahir)) }}
+                        </td>
                         <td>{{ $siswa->jurusan->jurusan }}</td>
                         <td>{{ $siswa->kelas->kelas }}</td>
                         <td>{{ $siswa->orangTua->nama }}</td>

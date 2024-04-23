@@ -37,7 +37,7 @@
                         popup: 'remove-cart-popup',
                     }
                 });
-            })
+            });
 
             $(document).on('submit', '#form-siswa', function(e){
                 e.preventDefault();
@@ -53,13 +53,18 @@
                     processData: false,
                     data: data,
                     success: function(response){
-                        toastr.success('Berhasil Membuat Akun Siswa');
                         el.reset();
+                        toastr.success('Berhasil Membuat Akun Siswa');
                     },
                     error: function(response){
                         toastr.error('Gagal Membuat Akun Siswa');
                     }
                 })
+            });
+
+            $(document).on('click','.js-btn-reset', function(){
+                $('input').val('');
+                $('select').val('');
             });
         })
     </script>

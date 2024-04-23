@@ -10,6 +10,6 @@ class Mapel extends Model
     use HasFactory;
 
     protected $table = 'mapels';
-    protected $fillable = ['id_kelas','id_jurusan','username','password','nama_mapel','nama_guru','nip'];
+    protected $fillable = ['user_id','id_kelas','id_jurusan','kode_mapel','nama_mapel','nama_guru','nip'];
     protected $primaryKey = 'id_mapel';
 }

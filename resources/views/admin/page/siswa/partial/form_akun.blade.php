@@ -75,7 +75,7 @@
                         <input type="file" class="hidden" id="import-akun">
                     </a>
                     <button type="submit" class="btn btn-sm btn-success text-white">Simpan</button>
-                    <button type="button" class="btn btn-sm btn-error text-white">Batalkan</button>
+                    <a href="javascript:void(0)" class="js-btn-reset btn btn-sm btn-error text-white">Batalkan</a>
                 </div>
             </div>
         </div>

@@ -14,7 +14,7 @@
                 <div class="flex justify-center items-center mb-5">
                     <h1 class="text-blue-600 font-bold text-2xl text-center">Login Siswa</h1>
                 </div>
-                <form class="w-full" method="POST" action="{{ route('login.siswa') }}">
+                <form class="w-full" method="POST" action="{{ route('siswa.login') }}">
                     @csrf
                     <div>
                         <x-text-input id="username" 

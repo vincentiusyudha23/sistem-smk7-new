@@ -5,17 +5,18 @@ namespace App\Models;
 use App\Models\Kelas;
 use App\Models\Jurusan;
 use App\Models\OrangTua;
+use Illuminate\Foundation\Auth\Siswa as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Siswa extends Model
+class Siswa extends Authenticatable
 {
     use HasFactory;
 
     protected $table = 'siswas';
-    protected $fillable = ['id_orangtua','id_kelas','id_jurusan','username','password','nama','nis','tanggal_lahir'];
+    protected $fillable = ['user_id','id_orangtua','id_kelas','id_jurusan','nama','nis','tanggal_lahir'];
     protected $primaryKey = 'id_siswa';
 
     public function kelas(): BelongsTo
