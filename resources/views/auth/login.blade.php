@@ -31,8 +31,8 @@
             <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
-        {{-- <form method="POST" action="{{ route('login') }}"> --}}
-        <form>
+        <form method="POST" action="{{ route('login') }}">
+        {{-- <form> --}}
             @csrf
 
             <!-- Email Address -->
@@ -76,9 +76,9 @@
                     </a>
                 @endif
                 
-                <a href="{{ $url }}" class="btn btn-primary mb-3 text-white text-lg w-full">
+                <button type="submit" class="btn btn-primary mb-3 text-white text-lg w-full">
                     {{ __('Log in') }}
-                </a>
+                </button>
                 @if ($role === 'admin')
                     <div class="w-full text-center my-3 text-blue-600">
                         <a href="{{ route('admin.register') }}">Belum Memiliki Akun?</a>

@@ -28,7 +28,7 @@
                 <td>12:00</td>
                 <td>
                     <div class="tooltip" data-tip="Mulai">
-                        <a href="#" class="btn btn-sm btn-success text-white">
+                        <a  href="{{ route('siswa.soal-ujian') }}"  class="btn btn-sm btn-success text-white">
                             Ikut Ujian
                         </a>
                     </div>
@@ -50,7 +50,7 @@
                 <td>12:00</td>
                 <td>
                     <div class="tooltip" data-tip="Mulai">
-                        <a href="#" class="btn btn-sm btn-success text-white">
+                        <a  href="{{ route('siswa.soal-ujian') }}"  class="btn btn-sm btn-success text-white">
                             Ikut Ujian
                         </a>
                     </div>
@@ -72,7 +72,7 @@
                 <td>12:00</td>
                 <td>
                     <div class="tooltip" data-tip="Mulai">
-                        <a href="#" class="btn btn-sm btn-success text-white">
+                        <a href="{{ route('siswa.soal-ujian') }}" class="btn btn-sm btn-success text-white">
                             Ikut Ujian
                         </a>
                     </div>

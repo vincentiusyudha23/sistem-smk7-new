@@ -37,7 +37,7 @@
         </div>
         <div class="w-[80%]">
             <div class="w-full h-14 bg-purple-200 flex items-center px-14 text-lg font-semibold">
-                <h1>Selamat Siang, Vincentius Yudha</h1>
+                <h1>Selamat Siang, {{ auth()->user()->mapel->nama_guru }}</h1>
             </div>
             <div class="w-full px-10">
                 <div class="w-full mt-5">

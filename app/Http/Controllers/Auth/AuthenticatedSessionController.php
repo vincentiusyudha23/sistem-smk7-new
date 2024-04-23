@@ -34,6 +34,24 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
+    public function LoginSiswa(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        return redirect()->intended('/siswa/dashboard');
+    }
+
+    public function LoginMapel(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        return redirect()->intended('/mapel/dashboard');
+    }
+
     /**
      * Destroy an authenticated session.
      */

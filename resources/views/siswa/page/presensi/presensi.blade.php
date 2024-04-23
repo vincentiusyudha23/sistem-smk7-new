@@ -8,8 +8,9 @@
     <x-layout-siswa>
         <div class="w-full flex flex-col justify-center items-center mt-12">
             <h1 class="text-2xl font-bold">Scan Barcode Presensi</h1>
-            <div class="w-[500px] h-[500px] mt-20">
-                <video id="scanner"></video>
+            <div class="w-[500px] h-[500px] mt-10 flex flex-col justify-center items-center">
+              <video id="scanner"></video>
+              <a href="{{ route('siswa.riwayat-presensi') }}" class="btn btn-active mt-10">Riwayat Pesan</a>
             </div>
         </div>
     </x-layout-siswa>
