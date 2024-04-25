@@ -8,8 +8,12 @@ use App\Models\Mapel;
 use App\Models\Siswa;
 use App\Models\Jurusan;
 use App\Models\OrangTua;
+use App\Imports\SiswaImport;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -36,7 +40,7 @@ class AdminController extends Controller
     {
         $kelas = Kelas::all();
         $jurusan = Jurusan::all();
-        $siswas = Siswa::orderBy('created_at', 'asc')->with('kelas','jurusan','orangTua')->get();
+        $siswas = Siswa::orderBy('created_at', 'desc')->with('kelas','jurusan','orangTua')->get();
         
         return view('admin.page.siswa.kelola_siswa', compact('kelas','jurusan','siswas'));
     }
@@ -45,7 +49,8 @@ class AdminController extends Controller
     {
         $kelas = Kelas::all();
         $jurusan = Jurusan::all();
-        return view('admin.page.mapel.kelola_mapel', compact('kelas','jurusan'));
+        $mapels = Mapel::orderBy('created_at', 'desc')->with(['kelas', 'jurusan'])->get();
+        return view('admin.page.mapel.kelola_mapel', compact('kelas','jurusan', 'mapels'));
     }
 
     public function presensi()
@@ -55,32 +60,131 @@ class AdminController extends Controller
 
     public function store_siswa(Request $request)
     {
-        $akun = User::create([
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-            'role' => 'siswa'
-        ]);
-
-        $orang_tua = OrangTua::create([
-            'nama' => $request->nama_orangtua,
-            'nomor_telepon' => $request->nomor_telepon
-        ]);
-
-        if($orang_tua && $akun){
-            Siswa::create([
-                'user_id' => $akun->id,
-                'id_orangtua' => $orang_tua->id_orangtua,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan,
-                'nama' => $request->nama_siswa,
-                'nis' => $request->nis,
-                'tanggal_lahir' => $request->tanggal_lahir
+        try {
+            $request->validate([
+                'username' => 'required|unique:users',
+                'password' => 'required',
+                'nama_siswa' => 'required',
+                'nis' => 'required',
+                'tanggal_lahir' => 'required'
             ]);
     
-            return response()->json(['success', 'Berhasil Membuat Akun Siswa']);
-        } else {
-            return response()->json(['error', 'Gagal Membuat Akun Siswa']);
+            $akun = User::create([
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'role' => 'siswa'
+            ]);
+    
+            $orang_tua = OrangTua::create([
+                'nama' => $request->nama_orangtua,
+                'nomor_telepon' => $request->nomor_telepon
+            ]);
+    
+            if($orang_tua && $akun){
+                Siswa::create([
+                    'user_id' => $akun->id,
+                    'id_orangtua' => $orang_tua->id_orangtua,
+                    'id_kelas' => $request->kelas,
+                    'id_jurusan' => $request->jurusan,
+                    'password' => $request->password,
+                    'nama' => $request->nama_siswa,
+                    'nis' => $request->nis,
+                    'tanggal_lahir' => $request->tanggal_lahir
+                ]);
+        
+                return response()->json([
+                    'type' => 'success', 
+                    'msg'  => 'Berhasil Membuat Akun Siswa'
+                ]);
+            } else {
+                if($orang_tua){
+                    $orang_tua->delete();
+                }
+                return response()->json([
+                    'type' => 'error', 
+                    'msg'  => 'Gagal Membuat Akun Siswa'
+                ]);
+            }
+        } catch (\Exception $exception){
+            return response()->json([
+                'type' => 'error',
+                'msg'  => 'Username Sudah Ada'
+            ]);
         }
+    }
+
+    public function import_siswa(Request $request) : JsonResponse
+    {
+        if($request->hasFile('file_siswa')){
+            $file = $request->file('file_siswa');
+
+            Excel::import(new SiswaImport, $file);
+
+            return response()->json([
+                'type' => 'success',
+                'msg'  => 'Berhasil Membuat Akun Siswa'
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'File Tidak ada!'
+            ]);
+        }
+    }
+
+    public function update_siswa(Request $request)
+    {
+        $siswa = Siswa::find($request->id_siswa);
+        
+        if($siswa){
+            $user = User::find($siswa->user_id);
+            $user->username = $request->username;
+            $user->password = $request->password;
+            $user->save();
+
+            $orang_tua = OrangTua::find($siswa->id_orangtua);
+            $orang_tua->nama = $request->nama_orangtua;
+            $orang_tua->nomor_telepon = $request->nomor_telepon;
+            $orang_tua->save();
+
+            $siswa->update([
+                'nama' => $request->nama_siswa,
+                'nis' => $request->nis,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'password' => $request->password,
+                'id_kelas' => $request->kelas,
+                'id_jurusan' => $request->jurusan
+            ]);
+
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Update Akun!'
+            ]);
+        }
+
+        return response()->json([
+            'type' => 'error',
+            'msg' => 'Gagal Update Akun!'
+        ]);
+    }
+
+    public function delete_siswa(Request $request) : JsonResponse
+    {
+        $request->validate(['id_siswa' => 'required']);
+
+        $siswa = Siswa::find($request->id_siswa);
+
+        if($siswa){
+            User::find($siswa->user_id)->delete();
+            OrangTua::find($siswa->id_orangtua)->delete();
+        }
+
+        $siswa->delete();
+
+        return response()->json([
+            'type' => 'success',
+            'msg' => 'Akun Siswa Berhasil dihapus'
+        ]);
     }
 
     public function store_mapel(Request $request)
@@ -96,17 +200,52 @@ class AdminController extends Controller
                 'user_id' => $akun->id,
                 'id_kelas' => $request->kelas,
                 'id_jurusan' => $request->jurusan,
+                'password' => $request->password,
                 'kode_mapel' => $request->kode_mapel,
                 'nama_mapel' => $request->nama_mapel,
                 'nama_guru' => $request->nama_guru,
                 'nip' => $request->nip,
             ]);
     
-            return response()->json(['success' => true, 'msg' => 'Berhasil Membuat Akun Mapel']);
+            return response()->json(['type' => 'success', 'msg' => 'Berhasil Membuat Akun Mapel']);
         } else {
-            return response()->json(['error' => true, 'msg' => 'Gagal Membuat Akun Mapel']);
+            return response()->json(['type' => 'error', 'msg' => 'Gagal Membuat Akun Mapel']);
         }
     }
+
+    public function update_mapel(Request $request)
+    {
+        $mapel = Mapel::find($request->id_mapel);
+
+        if($mapel){
+            $user = User::find($mapel->user_id);
+            $user->username = $request->username;
+            $user->password = $request->password;
+            $user->save();
+
+            $mapel->update([
+                'nama_mapel' => $request->nama_mapel,
+                'kode_mapel' => $request->kode_mapel,
+                'nama_guru' => $request->nama_guru,
+                'nip' => $request->nip,
+                'id_kelas' => $request->id_kelas,
+                'id_jurusan' => $request->id_jurusan,
+                'password' => $request->password, 
+            ]);
+
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Update Akun'
+            ]);
+        }
+
+        return response()->json([
+            'type' => 'error',
+            'msg' => 'Akun Tidak Ditemukan'
+        ]);
+    }
+
+    
 
     /**
      * Show the form for creating a new resource.

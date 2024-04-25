@@ -49,12 +49,23 @@
                     contentType: false,
                     processData: false,
                     data: data,
+                    beforeSend: function(){
+                        $('.loader').show();
+                    },
                     success: function(response){
-                        toastr.success(response.msg);
-                        el.reset();
+                        if(response.type === 'success'){
+                            $('.loader').hide();
+                            toastr.success(response.msg);
+                            location.reload();
+                        }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg);
+                            $('.loader').hide();
+                        }
                     },
                     error: function(response){
                         toastr.error(response.msg);
+                        $('.loader').hide();
                     }
                 })
             });

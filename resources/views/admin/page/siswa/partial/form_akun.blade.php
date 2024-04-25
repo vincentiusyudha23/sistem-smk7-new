@@ -69,13 +69,23 @@
                     </div>
                     <input required name="nomor_telepon" type="number" placeholder="Nomor Telepon" class="input input-sm input-bordered w-full" />
                 </label>
-                <div class="w-full h-full flex justify-end mt-8 gap-2 ">
-                    <a class="btn btn-sm btn-warning text-white">
-                        <label for="import-akun" class="hover:cursor-pointer">Import Akun</label>
-                        <input type="file" class="hidden" id="import-akun">
-                    </a>
-                    <button type="submit" class="btn btn-sm btn-success text-white">Simpan</button>
-                    <a href="javascript:void(0)" class="js-btn-reset btn btn-sm btn-error text-white">Batalkan</a>
+                <div class="w-full h-full mt-8 ">
+                    <div class="w-full  flex justify-end gap-2">
+                        <a class="btn btn-sm btn-warning text-white" id="import-siswa">
+                            <label for="import-akun" class="hover:cursor-pointer">Import Akun</label>
+                        </a>
+                        <button type="submit" class="btn btn-sm btn-success text-white">Simpan</button>
+                        <a href="javascript:void(0)" class="js-btn-reset btn btn-sm btn-error text-white">Batalkan</a>
+                    </div>
+                    <div class="w-full flex justify-end mt-2">
+                        <span class="text-black text-sm font-light">
+                            <sup>*</sup>
+                            Contoh File :
+                            <a href="{{ asset('asset/file_akun_siswa.xlsx') }}" download class="btn btn-sm btn-info text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
+                            </a>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,18 +8,24 @@ use Illuminate\View\Component;
 
 class AdminEditSiswa extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+
+    public function __construct(
+        public $ranId, 
+        public $siswa,
+        public $username,
+        public $password,
+        public $nis,
+        public $tanggallahir,
+        public $jurusan,
+        public $kelas,
+        public $orangtua,
+        public $nomorOrangtua,
+    ){}
 
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View|Closure|string
+    public function render(): View
     {
         return view('components.admin-edit-siswa');
     }

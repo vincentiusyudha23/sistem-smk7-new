@@ -39,6 +39,9 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/siswa',[AdminController::class, 'akun_siswa'])->name('siswa');
     Route::post('/store_siswa',[AdminController::class, 'store_siswa'])->name('siswa.store');
+    Route::post('/import_siswa',[AdminController::class, 'import_siswa'])->name('siswa.import');
+    Route::post('/update_siswa',[AdminController::class, 'update_siswa'])->name('siswa.update');
+    Route::get('/delete_siswa',[AdminController::class, 'delete_siswa'])->name('siswa.delete');
     Route::post('/store_mapel',[AdminController::class, 'store_mapel'])->name('mapel.store');
     Route::get('/mapel',[AdminController::class, 'akun_mapel'])->name('mapel');
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
