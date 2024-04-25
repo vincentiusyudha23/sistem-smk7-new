@@ -11,15 +11,22 @@ class AdminEditMapel extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public $idMapel,
+        public $namaMapel,
+        public $username,
+        public $password,
+        public $kodeMapel,
+        public $namaGuru,
+        public $nip,
+        public $kelas,
+        public $jurusan
+    ){}
 
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View|Closure|string
+    public function render(): View
     {
         return view('components.admin-edit-mapel');
     }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('id_orangtua')->references('id_orangtua')->on('orang_tuas')->cascadeOnDelete();
             $table->foreignId('id_kelas')->references('id_kelas')->on('kelas')->cascadeOnDelete();
             $table->foreignId('id_jurusan')->references('id_jurusan')->on('jurusans')->cascadeOnDelete();
+            $table->string('password')->nullable();
             $table->string('nama');
             $table->string('nis');
             $table->date('tanggal_lahir');

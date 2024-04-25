@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreignId('id_kelas')->references('id_kelas')->on('kelas')->cascadeOnDelete();
             $table->foreignId('id_jurusan')->references('id_jurusan')->on('jurusans')->cascadeOnDelete();
+            $table->string('password')->nullable();
             $table->string('nama_mapel');
             $table->string('kode_mapel')->unique();
             $table->string('nama_guru');
