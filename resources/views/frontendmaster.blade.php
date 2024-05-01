@@ -20,7 +20,7 @@
     </head>
     <body class="p-0 m-0">
         <div class="w-full min-h-screen bg-gray-100">
-            <div class="w-full h-screen bg-transparent fixed z-40 hidden loader">
+            <div class="w-full h-screen bg-transparent fixed z-50 hidden loader">
                 <div class="w-full h-full fixed flex justify-center items-center bg-black/20 z-50">
                     <span class="loading loading-spinner text-primary loading-lg"></span>
                 </div>

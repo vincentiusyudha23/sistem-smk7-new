@@ -35,19 +35,34 @@ class SiswaImport implements ToModel, WithHeadingRow
         ]);
 
         $orang_tua = OrangTua::create([
-            'nama' => $row['Orang Tua'],
-            'nomor_telepon' => $row['Nomor Telepon']
+            'nama' => $this->toStringKey($row['Orang Tua']),
+            'nomor_telepon' => $this->toStringKey($row['Nomor Telepon'], false) 
         ]);
 
-        return new Siswa([
-            'user_id' => $user->id,
-            'id_orangtua' => $orang_tua->id_orangtua,
-            'id_jurusan' => Jurusan::where('jurusan', $row['Jurusan'])->first()->id_jurusan,
-            'id_kelas' => Kelas::where('kelas', $row['Kelas'])->first()->id_kelas,
-            'password' => $password,
-            'nama' => $row['Nama'],
-            'nis' => $row['NIS'],
-            'tanggal_lahir' => Carbon::createFromFormat('d/m/Y', $row['Tanggal Lahir'])->toDateString()
-        ]);
+        $jurusan = Jurusan::where('jurusan', $this->toStringKey($row['Jurusan']))->first();
+        
+        $kelas =Kelas::where('kelas', $this->toStringKey($row['Kelas'], false))->first();
+
+        if($kelas && $jurusan){
+            return new Siswa([    
+                'user_id' => $user->id,
+                'id_orangtua' => $orang_tua->id_orangtua,
+                'id_jurusan' => $jurusan->id_jurusan,
+                'id_kelas' => $kelas->id_kelas,
+                'password' => $password,
+                'nama' => $this->toStringKey($row['Nama']),
+                'nis' => $this->toStringKey($row['NIS']),
+                'tanggal_lahir' => Carbon::createFromFormat('d/m/Y', $row['Tanggal Lahir'])->toDateString()
+            ]);
+        }
+    }
+
+    private function toStringKey($value, $key = true)
+    {
+        if($key){
+            return (string)$value;
+        } else{
+            return (integer)$value;
+        }
     }
 }

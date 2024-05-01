@@ -35,6 +35,68 @@
                     }
                 });
             })
+
+            $(document).on('submit', '#form-sesi-ujian', function(e){
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('mapel.sesi-ujian.store') }}',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    beforeSend:function(){
+                        $('.loader').show();
+                    },
+                    success: function(response){
+                        if(response.type === 'success'){
+                            toastr.success(response.msg);
+                            location.reload();
+                        }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg)
+                        }
+                        $('.loader').hide();
+                    },
+                });
+            });
+
+            $(document).on('submit', '#form-edit-sesi', function(e){
+                e.preventDefault();
+                var data = new FormData(this);
+                var btn_save = $(this).find('button[type="submit"]');
+                var spinner = '<span class="loading loading-spinner loading-sm"></span>';
+                $.ajax({
+                    type : 'post',
+                    url: '{{ route('mapel.sesi-ujian.update') }}',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    beforeSend: function(){
+                        btn_save.html(spinner);
+                        btn_save.addClass('btn-disabled');
+                    },
+                    success: function(response){
+                        if(response.type === 'success'){
+                            toastr.success(response.msg);
+                            location.reload();
+                        }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg);
+                            btn_save.removeClass('btn-disabled');
+                            btn_save.text('Simpan');
+                        }
+                    },
+                    error: function(response){
+                        toastr.error(response.msg);
+                        btn_save.removeClass('btn-disabled');
+                        btn_save.text('Simpan');
+                    }
+                })
+            });
         })
     </script>
 @endpush

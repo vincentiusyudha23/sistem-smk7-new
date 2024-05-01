@@ -11,7 +11,12 @@ class MapelEditSesiUjian extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct(
+        public $idSesi,
+        public $tanggal,
+        public $start,
+        public $end
+    )
     {
         //
     }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SesiUjian;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class MapelController extends Controller
 {
@@ -26,12 +28,69 @@ class MapelController extends Controller
 
     public function sesi_ujian()
     {
-        return view('mapel.page.sesiUjian.sesi-ujian');
+        $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->orderBy('created_at', 'desc')->get();
+
+        return view('mapel.page.sesiUjian.sesi-ujian', compact('sesi'));
     }
 
-    public function soal_ujian()
+    public function soal_ujian($id)
     {
-        return view('mapel.page.soalUjian.soal-ujian');
+        $sesi = SesiUjian::where('id', $id)->first();
+        return view('mapel.page.soalUjian.soal-ujian', compact('sesi'));
+    }
+
+    public function store_sesiujian(Request $request): JsonResponse
+    {
+        try{
+            $request->validate([
+                'tanggal_ujian' => 'required',
+                'start' => 'required',
+                'end' => 'required'
+            ]);
+
+            SesiUjian::create([
+                'id_mapel' => auth()->user()->mapel->id_mapel,
+                'tanggal_ujian' => $request->tanggal_ujian,
+                'start' => $request->start,
+                'end' => $request->end
+            ]);
+
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Membuat Sesi Ujian'
+            ]);
+        } catch(\Exception $exception){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Gagal Membuat Sesi Ujian'
+            ]);
+        }
+    }
+
+    public function update_sesi_ujian(Request $request)
+    {
+        try{
+            $sesi = SesiUjian::find($request->idSesi);
+            $sesi->tanggal_ujian = $request->tanggal_ujian;
+            $sesi->start = $request->start;
+            $sesi->end = $request->end;
+            $sesi->save();
+
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Update Sesi Ujian'
+            ]);
+        } catch(\Exception $exception){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Gagal Update Sesi Ujian'
+            ]);
+        }
+    }
+
+    public function store_soal_ujian(Request $request)
+    {
+        return dd($request->request);
     }
 
     /**

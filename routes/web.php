@@ -44,13 +44,18 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::get('/delete_siswa',[AdminController::class, 'delete_siswa'])->name('siswa.delete');
     Route::post('/store_mapel',[AdminController::class, 'store_mapel'])->name('mapel.store');
     Route::get('/mapel',[AdminController::class, 'akun_mapel'])->name('mapel');
+    Route::post('/mapel-update',[AdminController::class, 'update_mapel'])->name('mapel.update');
+    Route::get('/mapel-delete',[AdminController::class, 'mapel_delete'])->name('mapel.delete');
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
 });
     
 Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){
     Route::get('/dashboard',[MapelController::class,'index'])->name('dashboard');
     Route::get('/sesiujian',[MapelController::class,'sesi_ujian'])->name('sesi-ujian');
-    Route::get('/soal-ujian',[MapelController::class,'soal_ujian'])->name('soal-ujian');
+    Route::post('/sesiujian',[MapelController::class,'store_sesiujian'])->name('sesi-ujian.store');
+    Route::post('/sesiujian-edit',[MapelController::class,'update_sesi_ujian'])->name('sesi-ujian.update');
+    Route::get('/soal-ujian/{id}',[MapelController::class,'soal_ujian'])->name('soal-ujian');
+    Route::post('/soal-ujian',[MapelController::class,'store_soal_ujian'])->name('soal-ujian.store');
     Route::get('/hasil-ujian',[MapelController::class,'hasil_ujian'])->name('hasil-ujian');
 });
 
