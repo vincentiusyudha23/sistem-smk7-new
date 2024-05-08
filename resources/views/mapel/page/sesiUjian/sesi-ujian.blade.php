@@ -36,6 +36,38 @@
                 });
             })
 
+            $('.btn-update-status').on('click', function(){
+                var el = $(this);
+                var id_sesi = el.data('id');
+                var status = el.data('value');
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('mapel.sesi_ujian.update.status') }}',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id_sesi: id_sesi,
+                        status: status
+                    },
+                    beforeSend: function(){
+                        $('.loader').show();
+                    },
+                    success: function(response){
+                        $('.loader').hide();
+                        if(response.type === 'success'){
+                            toastr.success(response.msg);
+                            if(status === 0){
+                                var _html = `<a href="javascript:void(0)" class="btn-update-status btn btn-xs btn-success btn-circle text-white w-full" data-value="1" data-id="${id_sesi}">Sedang Mulai</a>`;
+                                el.parent().html(_html);
+                            } else {
+                                var _html = '<a href="javascript:void(0)" class="btn btn-xs btn-error btn-circle text-white w-full">Selesai</a> ';
+                                el.parent().html(_html);
+                            }
+                        }
+                    }
+                });
+            });
+
             $(document).on('submit', '#form-sesi-ujian', function(e){
                 e.preventDefault();
                 var formData = new FormData(this);

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SesiUjian;
+use App\Models\HasilUjian;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Redirect;
 
 class MapelController extends Controller
 {
@@ -23,7 +25,18 @@ class MapelController extends Controller
 
     public function hasil_ujian()
     {
-        return view('mapel.page.hasilUjian.hasil-ujian');
+        $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->orderBy('created_at', 'desc')->get();
+
+        return view('mapel.page.hasilUjian.hasil-ujian', compact('sesi'));
+    }
+
+    public function hasil_ujian_siswa($id)
+    {
+        $hasil_ujians = HasilUjian::where('id_sesi_ujian', $id)->orderBy('created_at', 'desc')->get();
+
+        $sesi = SesiUjian::where('id', $id)->first();
+
+        return view('mapel.page.hasilUjian.siswa-hasil-ujian', compact('hasil_ujians','sesi'));
     }
 
     public function sesi_ujian()
@@ -89,8 +102,46 @@ class MapelController extends Controller
     }
 
     public function store_soal_ujian(Request $request)
+    {   
+        $request->validate([
+            'id_sesi' => 'required',
+            'soal' => 'required'
+        ]);
+
+        $data = $request->soal;
+
+        $sesi = SesiUjian::find($request->id_sesi);
+
+        $sesi->update([
+            'soal_ujian' => $data
+        ]);
+        
+        return Redirect::route('mapel.sesi-ujian');
+    }
+
+    public function update_status(Request $request): JsonResponse
     {
-        return dd($request->request);
+        $request->validate([
+            'id_sesi' => 'required',
+            'status' => 'required'
+        ]);
+        $status = $request->status ?? 0;
+        $sesi = SesiUjian::find($request->id_sesi);
+
+        if($status == 0){
+            $sesi->update([
+                'status' => 1
+            ]);
+        } else{
+            $sesi->update([
+                'status' => 2
+            ]);
+        }
+
+        return response()->json([
+            'type' => 'success',
+            'msg' => 'Berhasil Update Status'
+        ]);
     }
 
     /**

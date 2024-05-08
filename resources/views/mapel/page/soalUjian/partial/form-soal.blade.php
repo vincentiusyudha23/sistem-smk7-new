@@ -1,6 +1,7 @@
 <div class="w-100 bg-gray-300 rounded-lg p-5">
     <form id="form-soal-ujian" method="POST" action="{{ route('mapel.soal-ujian.store') }}">
         @csrf
+        <input type="hidden" name="id_sesi" value="{{ $sesi->id }}">
         <p>Tanggal Ujian : {{ date('d-M-Y', strtotime($sesi->tanggal_ujian)) }},  <span class="btn btn-success btn-sm text-white">Mulai : {{ $sesi->start }}</span> - <span class="btn btn-error btn-sm text-white">Selesai : {{ $sesi->end }}</span></p>
         <div class="w-full">
             <ul class="list-soal mt-3">

@@ -16,7 +16,9 @@
         <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.6/css/dataTables.dataTables.css" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.datatables.net/2.0.6/js/dataTables.js"></script>
     </head>
     <body class="p-0 m-0">
         <div class="w-full min-h-screen bg-gray-100">
@@ -38,6 +40,18 @@
                 $.fn.hide = function(){
                     this.addClass('hidden');
                 };
+
+                $('#js-table').DataTable({
+                    'columnDefs' : [{
+                        'target': '_all',
+                        'className': 'dt-head-center'
+                    },
+                    {
+                        'target': '_all',
+                        'className': 'dt-body-center'
+                    }
+                ]
+                });
             })(jQuery);
         </script>
         @stack('script')
