@@ -23,7 +23,7 @@
 @push('script')
     <script>
         $(document).ready(function(){
-            $('.btn-delete-siswa').on('click', function(){
+            $('.btn-delete-mapel').on('click', function(){
                 Swal.fire({
                     title: "Hapus Akun Mata Pelajaran?",
                     icon: "warning",
@@ -32,6 +32,29 @@
                     confirmButtonText: "Hapus",
                     customClass: {
                         popup: 'remove-cart-popup',
+                    }
+                }).then( async (result) => {
+                    if(result.isConfirmed){
+                        var el = $(this);
+                        var id_siswa = el.data('id');
+
+                        await $.ajax({
+                            url: '{{ route('admin.mapel.delete') }}',
+                            type: 'GET',
+                            data: {
+                                'id_mapel' : id_siswa
+                            },
+                            beforeSend: function(){
+                                $('.loader').show();
+                            },
+                            success: function(response){
+                                if(response.msg){
+                                    toastr.success(response.msg);
+                                    location.reload();
+                                }
+                                $('.loader').hide();
+                            }
+                        })
                     }
                 });
             })
@@ -54,18 +77,53 @@
                     },
                     success: function(response){
                         if(response.type === 'success'){
-                            $('.loader').hide();
                             toastr.success(response.msg);
                             location.reload();
                         }
                         if(response.type === 'error'){
                             toastr.error(response.msg);
-                            $('.loader').hide();
                         }
+                        $('.loader').hide();
                     },
                     error: function(response){
                         toastr.error(response.msg);
                         $('.loader').hide();
+                    }
+                })
+            });
+
+             $(document).on('submit', '#form-edit-mapel', function(e){
+                e.preventDefault();
+                var el = $(this);
+                var data = new FormData(this);
+                var spinner = '<span class="loading loading-spinner loading-sm"></span>';
+                var btn_save = el.find('button[type="submit"]');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('admin.mapel.update') }}',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    beforeSend: function(){
+                        btn_save.html(spinner);
+                        btn_save.addClass('btn-disabled');
+                    },
+                    success: function(response){
+                        if(response.type === 'success'){
+                            toastr.success(response.msg);
+                            location.reload();
+                        }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg);
+                            btn_save.removeClass('btn-disabled');
+                            btn_save.text('Simpan');
+                        }
+                    },
+                    error: function(response){
+                        toastr.error(response.msg);
+                        btn_save.removeClass('btn-disabled');
+                        btn_save.text('Simpan');
                     }
                 })
             });

@@ -18,6 +18,7 @@
         </div>
         <form class="mt-3" id="form-edit-mapel">
             @csrf
+            <input type="hidden" name="id_mapel" value="{{ $idMapel }}">
             <div class="flex flex-row flex-wrap gap-3">
                 <div class="flex-grow">
                 <label class="form-control w-full"> 

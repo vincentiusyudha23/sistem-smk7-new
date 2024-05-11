@@ -76,9 +76,6 @@
                     showCancelButton: true,
                     confirmButtonColor: "#dc3545",
                     confirmButtonText: "Hapus",
-                    customClass: {
-                        popup: 'remove-cart-popup',
-                    }
                 }).then( async (result) => {
                     if(result.isConfirmed){
                         var el = $(this);

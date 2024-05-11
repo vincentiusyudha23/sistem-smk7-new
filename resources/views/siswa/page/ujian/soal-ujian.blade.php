@@ -5,112 +5,48 @@
 @endsection
 
 @section('content')
+    @php
+        $soalUjian = json_decode($ujian->soal_ujian, true) ?? [];
+      
+    @endphp
     <x-layout-siswa>
         <div class="w-full mt-5">
-            <h1 class="text-2xl font-bold mb-3">Ujian Matematika</h1>
+            <h1 class="text-2xl font-bold mb-3">Ujian {{ $mapel }}</h1>
             <div class="w-full bg-gray-300 rounded-lg p-5 soal-ujian">
-                <div class="w-full">
-                    <ul class="list-soal mt-3">
-                        <li class=" my-2 soal-1">
-                            <form>
+                <form id="form-ujian-siswa" data-url="{{ route('siswa.submit.ujian', ["mapel" => $mapel]) }}">
+                    @csrf
+                    <input type="hidden" id="mapel" value="{{ $mapel }}">
+                    <input type="hidden" name="id_sesi" value="{{ $ujian->id }}">
+                    <div class="w-full">
+                        <ul class="list-soal mt-3">
+                        @foreach ($soalUjian as $key => $soal)
+                            <li class=" my-2 soal-1">
                                 <label class="form-control">
-                                    <div class="label">
-                                        <span class="label-text text-lg font-semibold">Soal 1.</span>
-                                    </div>
-                                    <p>Soal 1 Adalah .....</p>
+                                    <textarea class="textarea textarea-bordered textarea-xs w-full text-sm" disabled>{{ $soal['soal'] }}</textarea>
                                 </label>
                                 <div class="flex flex-col gap-2 my-3">
-                                    <div class="form-control parent-opsiSoal-1">
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban A.</span>
+                                    <div class="form-control parent-opsiSoal-1 flex flex-col gap-2 bg-white pt-2 rounded-lg p-2">
+                                        @foreach ($soal['opsi-soal'] ?? [] as $opsi)
+                                        <label class="cursor-pointer js-opsi-soal label justify-start hover:bg-slate-200 active:bg-slate-200 hover:rounded-lg">
+                                            <input type="radio" name="{{ $key }}" value="{{ $opsi == $soal['jawaban'][0] ? encrypt(1) : encrypt(0) }}" class="radio radio-primary radio-sm"/>
+                                            <span class="mx-2">{{ $opsi }}</span>
                                         </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban B.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban C.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban D.</span>
-                                        </label>
+                                        @endforeach
                                     </div>
                                 </div>
-                            </form>
-                        </li>
-                        <li class=" my-2 soal-1">
-                            <form>
-                                <label class="form-control">
-                                    <div class="label">
-                                        <span class="label-text text-lg font-semibold">Soal 2.</span>
-                                    </div>
-                                    <p>Soal 2 Adalah .....</p>
-                                </label>
-                                <div class="flex flex-col gap-2 my-3">
-                                    <div class="form-control parent-opsiSoal-1">
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban A.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban B.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban C.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban D.</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </form>
-                        </li>
-                        <li class="my-2 soal-1">
-                            <form>
-                                <label class="form-control">
-                                    <div class="label">
-                                        <span class="label-text text-lg font-semibold">Soal 3.</span>
-                                    </div>
-                                    <p>Soal 3 Adalah .....</p>
-                                </label>
-                                <div class="flex flex-col gap-2 my-3">
-                                    <div class="form-control parent-opsiSoal-1">
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban A.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban B.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban C.</span>
-                                        </label>
-                                        <label class="label cursor-pointer justify-start">
-                                            <input type="radio" name="radio-1" class="radio radio-primary radio-sm"/>
-                                            <span class="mx-2">Jawaban D.</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </form>
-                        </li>
-                    </ul>
-                    <div class="w-full flex justify-end items-end gap-2">
-                        <button type="button" class="btn btn-sm btn-success text-white border-2 btn-tambah-soal">
-                            Simpan
-                        </button>
-                        <button type="button" class="btn btn-sm btn-error text-white border-2 btn-tambah-soal">
-                            Batalkan
-                        </button>
+                            </li>
+                        @endforeach
+                        </ul>
+                        <div class="w-full flex justify-end items-end gap-2">
+                            <button type="submit" class="btn btn-sm btn-success text-white border-2">
+                                Simpan
+                            </button>
+                            <button type="button" class="btn btn-sm btn-error text-white border-2 btn-tambah-soal">
+                                Batalkan
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </x-layout-siswa>
@@ -118,6 +54,43 @@
 
 @push('script')
     <script>
+        $(document).ready(function(){
+            $('#form-ujian-siswa').submit(function(e){
+                e.preventDefault();
+    
+                Swal.fire({
+                    title: "Submit Jawaban?",
+                    text: 'Sudah Yakin Dengan Jawaban Anda?',
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#00a96e",
+                    confirmButtonText: "Submit",
+                    cancelButtonText: 'Cancel'
+                }).then(async (result) => {
+                    if(result.value){
+                        var formData = $(this).serialize();
+                        var url = $(this).data('url');
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route('siswa.submit.jawaban') }}',
+                            data: formData,
+                            beforeSend: function(){
+                                $('.loader').show();
+                            },
+                            success: function(response){
+                                $('.loader').hide();
+                                if(response.type == 'success'){
+                                    window.location.href = url;
+                                }
+                                if(response.type == 'error'){
+                                    toastr.error(response.msg);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
         $(document).on('click', '.btn-tambah-soal', function(){
             var selesai = `
                 <div class="w-full bg-gray-300 rounded-lg p-5 text-center">

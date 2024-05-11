@@ -228,8 +228,8 @@ class AdminController extends Controller
                 'kode_mapel' => $request->kode_mapel,
                 'nama_guru' => $request->nama_guru,
                 'nip' => $request->nip,
-                'id_kelas' => $request->id_kelas,
-                'id_jurusan' => $request->id_jurusan,
+                'id_kelas' => $request->kelas,
+                'id_jurusan' => $request->jurusan,
                 'password' => $request->password, 
             ]);
 
@@ -242,6 +242,24 @@ class AdminController extends Controller
         return response()->json([
             'type' => 'error',
             'msg' => 'Akun Tidak Ditemukan'
+        ]);
+    }
+
+    public function mapel_delete(Request $request)
+    {
+        $request->validate(['id_mapel' => 'required']);
+
+        $mapel = Mapel::find($request->id_mapel);
+
+        if($mapel){
+            User::find($mapel->user_id)->delete();
+        }
+
+        $mapel->delete();
+
+        return response()->json([
+            'type' => 'success',
+            'msg' => 'Berhasil Menghapus Akun'
         ]);
     }
 
