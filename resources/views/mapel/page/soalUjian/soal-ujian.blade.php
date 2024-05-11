@@ -12,7 +12,7 @@
             @include('mapel.sidebar.sidebar')
         </div>
         <div class="w-[80%] p-10">
-            <h1 class="text-2xl font-bold my-2">Soal Ujian Matematika</h1>
+            <h1 class="text-2xl font-bold my-2">Soal Ujian {{ auth()->user()->mapel->nama_mapel }}</h1>
             @include('mapel.page.soalUjian.partial.form-soal')
         </div>
     </div>
