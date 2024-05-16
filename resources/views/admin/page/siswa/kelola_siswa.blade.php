@@ -7,17 +7,12 @@
 @endsection
 
 @section('content')
-    <div class="flex flex-row">
-        <div class="w-[20%]">
-            @include('admin.sidebar.sidebar')
-        </div>
-        <div class="w-[80%] p-10">
-            <h1 class="text-2xl font-bold my-2">Buat Akun Siswa</h1>
-            @include('admin.page.siswa.partial.form_akun')
-            <h1 class="text-2xl font-bold mt-10">List Akun Siswa</h1>
-            @include('admin.page.siswa.partial.tabel_siswa')
-        </div>
-    </div>
+    <x-admin-layout>
+        <h1 class="text-2xl font-bold my-2">Buat Akun Siswa</h1>
+        @include('admin.page.siswa.partial.form_akun')
+        <h1 class="text-2xl font-bold mt-10">List Akun Siswa</h1>
+        @include('admin.page.siswa.partial.tabel_siswa')
+    </x-admin-layout>
 @endsection
 
 @push('script')

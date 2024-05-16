@@ -1,4 +1,4 @@
-<table class="display" style="width: 100%" id="js-table">
+<table class="display w-full" id="js-table">
     <!-- head -->
     {{-- @php
         dd($ujians);

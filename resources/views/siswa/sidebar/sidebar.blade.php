@@ -1,4 +1,4 @@
-<div class="w-[20%] h-screen bg-blue-700 p-3 text-white fixed z-10 left-0 top-0">
+<div class="lg:w-[20%] h-screen bg-blue-700 p-3 text-white hidden lg:block lg:fixed z-10 left-0 top-0">
     <h1 class="text-xl text-center font-bold">SMKN 7 BANDAR LAMPUNG</h1>
     <ul class="flex flex-col gap-3 mt-5 px-3">
         <li>

@@ -6,7 +6,7 @@
 
 @section('content')
     <x-layout-siswa>
-        <div class="w-full mt-5">
+        <div class="w-full h-full pt-5">
             <h1 class="text-2xl font-bold mb-3">List Sesi Ujian</h1>
             @include('siswa.page.ujian.partials.tabel-ujian')
         </div>
