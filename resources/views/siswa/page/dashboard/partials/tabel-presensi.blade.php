@@ -1,46 +1,49 @@
-<div class="overflow-x-auto">
-    <table class="table table-zebra">
-        <!-- head -->
-        <thead class="bg-gray-200 text-black">
+<table class="display responsive nowrap" width="100%" id="js-table-presensi">
+    <!-- head -->
+    <thead >
+        <tr>
+            <th>No.</th>
+            <th>Hari</th>
+            <th>Tanggal</th>
+            <th>Nama Siswa</th>
+            <th>NIS</th>
+            <th>Jurusan</th>
+            <th>Kelas</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($presensi as $riwayat)
             <tr>
-                <th>No.</th>
-                <th>Tanggal</th>
-                <th>Nama Siswa</th>
-                <th>NIS</th>
-                <th>Jurusan</th>
-                <th>Kelas</th>
-                <th>Status</th>
+                <td>{{ $loop->index + 1}}</td>
+                <td>{{ Carbon\Carbon::parse($riwayat->created_at)->locale('id')->isoFormat('dddd') }}</td>
+                <td>{{  date('d/m/Y', strtotime($riwayat->created_at)) }}</td>
+                <td>{{ auth()->user()->siswa->nama }}</td>
+                <td>{{ auth()->user()->siswa->nis }}</td>
+                <td>{{ auth()->user()->siswa->jurusan->jurusan }}</td>
+                <td>{{ auth()->user()->siswa->kelas->kelas }}</td>
+                <td>{{ $riwayat->status }}</td>
             </tr>
-        </thead>
-        <tbody>
-            <!-- row 1 -->
-            <tr>
-                <td>1</td>
-                <td>20/12/2024</td>
-                <td>Asep</td>
-                <td>12345678</td>
-                <td>Multimedia</td>
-                <td>12</td>
-                <td>Pulang</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>20/12/2024</td>
-                <td>Rahmat</td>
-                <td>12345678</td>
-                <td>Multimedia</td>
-                <td>12</td>
-                <td>Masuk</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>20/12/2024</td>
-                <td>Susi</td>
-                <td>12345678</td>
-                <td>Multimedia</td>
-                <td>12</td>
-                <td>Masuk</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+        @endforeach
+    </tbody>
+</table>
+<script>
+    $(document).ready(function(){
+        $('#js-table-presensi').DataTable({
+            responsive: {
+                details : false
+            },
+            columnDefs : [{
+                    'target': '_all',
+                    'className': 'dt-head-center'
+                },
+                {
+                    'target': '_all',
+                    'className': 'dt-body-center'
+                },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 }
+            ]
+        });
+    });
+</script>

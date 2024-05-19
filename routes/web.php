@@ -17,9 +17,11 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::view('/', 'firstpage')->name('homepage');
+
 
 Route::middleware('guest')->group(function(){
+
+    Route::view('/', 'firstpage')->name('homepage');
     
     Route::prefix('admin')->as('admin.')->group(function(){
         Route::get('/login',[AdminController::class, 'login'])->name('login');
@@ -48,6 +50,9 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::post('/mapel-update',[AdminController::class, 'update_mapel'])->name('mapel.update');
     Route::get('/mapel-delete',[AdminController::class, 'mapel_delete'])->name('mapel.delete');
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
+    Route::get('/generate-qr',[AdminController::class, 'generate_qr_code'])->name('generate-qr');
+    Route::post('/render_qr_code',[AdminController::class, 'render_qr_code'])->name('generate-qr.render');
+    Route::post('/updat_qr_code',[AdminController::class, 'update_qr_code'])->name('generate-qr.update');
 });
     
 Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){
@@ -68,8 +73,9 @@ Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(functio
     Route::get('/soal-ujian/{id}/{mapel}',[SiswaController::class, 'soal_ujian'])->name('soal-ujian');
     Route::post('/submit-jawaban', [SiswaController::class,'submit_jawaban'])->name('submit.jawaban');
     Route::get('/submit-ujian/{mapel}', [SiswaController::class,'submit_ujian'])->name('submit.ujian');
-    Route::view('/presensi','siswa.page.presensi.presensi')->name('presensi');
-    Route::view('/riwayat-presensi','siswa.page.presensi.riwayat-presensi')->name('riwayat-presensi');
+    Route::get('/presensi',[SiswaController::class,'presensi'])->name('presensi');
+    Route::post('/submit-presensi',[SiswaController::class,'submit_presensi'])->name('submit.presensi');
+    Route::get('/riwayat-presensi',[SiswaController::class,'riwayat_presensi'])->name('riwayat-presensi');
 });
 
 Route::get('/dashboard', function () {

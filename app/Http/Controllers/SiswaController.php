@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Mapel;
+use App\Models\Siswa;
 use App\Models\SesiUjian;
 use App\Models\HasilUjian;
+use App\Models\TokenQrCode;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\PresensiMasuk;
+use App\Models\PresensiPulang;
 use Illuminate\Http\JsonResponse;
+use App\Services\SendNotification;
 use Illuminate\Support\Facades\Auth;
 use App\DataTables\SesiUjianDataTable;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SiswaController extends Controller
 {
@@ -22,7 +30,12 @@ class SiswaController extends Controller
         
         $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
 
-        return view('siswa.page.dashboard.dashboard', compact('ujians'));
+        $presensi_masuk = PresensiMasuk::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+        $presensi_pulang = PresensiPulang::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+
+        $presensi = $presensi_masuk->union($presensi_pulang)->orderBy('created_at','desc')->get();
+
+        return view('siswa.page.dashboard.dashboard', compact('ujians','presensi'));
     }
 
     public function login()
@@ -32,7 +45,24 @@ class SiswaController extends Controller
 
     public function presensi()
     {
-        return view('siswa.page.presensi.presensi');
+        $token_masuk = TokenQrCode::where('nama','masuk')->where('status',1)->first();
+        $token_pulang = TokenQrCode::where('nama','pulang')->where('status',1)->first();
+
+        $token = [
+            'masuk' => $token_masuk?->token ?? '',
+            'pulang' => $token_pulang?->token ?? ''
+        ];
+        return view('siswa.page.presensi.presensi', compact('token'));
+    }
+
+    public function riwayat_presensi()
+    {
+        $presensi_masuk = PresensiMasuk::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+        $presensi_pulang = PresensiPulang::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+
+        $presensi = $presensi_masuk->union($presensi_pulang)->orderBy('created_at','desc')->get();
+
+        return view('siswa.page.presensi.riwayat-presensi', compact('presensi'));
     }
 
     public function ujian()
@@ -104,6 +134,88 @@ class SiswaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    public function submit_presensi(Request $request)
+    {
+        // 1 = masuk
+        // 2 = pulang
+        $presensi_masuk = PresensiMasuk::where('id_siswa', $request->id_siswa)
+                ->whereDate('created_at', Carbon::today())->first();
+        $presensi_pulang = PresensiPulang::where('id_siswa', $request->id_siswa)
+                ->whereDate('created_at', Carbon::today())->first();
+        if($request->distance <= 5){
+            try{
+                $siswa = Siswa::find($request->id_siswa);
+                $nomor_telp = $siswa->orangTua->nomor_telepon;
+
+                if($request->nama == 1){
+                    if(empty($presensi_masuk)){
+                        PresensiMasuk::create([
+                            'id_siswa' => $request->id_siswa,
+                            'status' => 'masuk'
+                        ]);
+
+                        if ($nomor_telp) {
+                            $sendMessage = new SendNotification();
+                            $sendMessage->sendMessageMasuk($nomor_telp, $siswa->nama);
+                        }
+
+
+                        return response()->json([
+                            'type' => 'success',
+                            'msg' => 'Berhasil Absen Masuk!'
+                        ]);
+    
+                        // return redirect()->back()->with('success','Berhasil Absen Masuk!');
+                    }
+    
+                    return response()->json([
+                            'type' => 'error',
+                            'msg' => 'Anda Sudah Absen Masuk Hari Ini!'
+                        ]); 
+                    // return redirect()->back()->with('error','Anda Sudah Absen Hari Ini!');
+                }
+    
+                if($request->nama == 2){
+                    if(empty($presensi_pulang)){
+                        PresensiPulang::create([
+                            'id_siswa' => $request->id_siswa,
+                            'status' => 'pulang'
+                        ]);
+
+                        if ($nomor_telp) {
+                            $sendMessage = new SendNotification();
+                            $sendMessage->sendMessagePulang($nomor_telp, $siswa->nama);
+                        }
+
+                        return response()->json([
+                            'type' => 'success',
+                            'msg' => 'Berhasil Absen Pulang!'
+                        ]);
+    
+                        // return redirect()->back()->with('success','Berhasil Absen Pulang!');
+                    }
+
+                    return response()->json([
+                            'type' => 'error',
+                            'msg' => 'Anda Sudah Absen Pulang Hari Ini!'
+                        ]); 
+    
+                    // return redirect()->back()->with('error','Anda Sudah Absen Hari Ini!');
+                }
+            }catch(\Exception $e){
+                return response()->json([
+                    'type' => 'error',
+                    'msg' => $e->getMessage()
+                ]);
+            }
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Kamu terlalu Jauh Dari Sekolah!'
+            ]);
+        }
+    }
     public function create()
     {
         //

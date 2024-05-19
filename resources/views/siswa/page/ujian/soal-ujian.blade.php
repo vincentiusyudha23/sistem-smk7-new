@@ -7,10 +7,9 @@
 @section('content')
     @php
         $soalUjian = json_decode($ujian->soal_ujian, true) ?? [];
-      
     @endphp
     <x-layout-siswa>
-        <div class="w-full mt-5">
+        <div class="w-full h-full pt-5">
             <h1 class="text-2xl font-bold mb-3">Ujian {{ $mapel }}</h1>
             <div class="w-full bg-gray-300 rounded-lg p-5 soal-ujian">
                 <form id="form-ujian-siswa" data-url="{{ route('siswa.submit.ujian', ["mapel" => $mapel]) }}">
