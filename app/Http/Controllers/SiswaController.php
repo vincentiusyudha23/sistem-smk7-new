@@ -30,7 +30,12 @@ class SiswaController extends Controller
         
         $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
 
-        return view('siswa.page.dashboard.dashboard', compact('ujians'));
+        $presensi_masuk = PresensiMasuk::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+        $presensi_pulang = PresensiPulang::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+
+        $presensi = $presensi_masuk->union($presensi_pulang)->orderBy('created_at','desc')->get();
+
+        return view('siswa.page.dashboard.dashboard', compact('ujians','presensi'));
     }
 
     public function login()
@@ -48,6 +53,16 @@ class SiswaController extends Controller
             'pulang' => $token_pulang?->token ?? ''
         ];
         return view('siswa.page.presensi.presensi', compact('token'));
+    }
+
+    public function riwayat_presensi()
+    {
+        $presensi_masuk = PresensiMasuk::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+        $presensi_pulang = PresensiPulang::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
+
+        $presensi = $presensi_masuk->union($presensi_pulang)->orderBy('created_at','desc')->get();
+
+        return view('siswa.page.presensi.riwayat-presensi', compact('presensi'));
     }
 
     public function ujian()

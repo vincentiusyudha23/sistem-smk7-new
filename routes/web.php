@@ -17,9 +17,11 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::view('/', 'firstpage')->name('homepage');
+
 
 Route::middleware('guest')->group(function(){
+
+    Route::view('/', 'firstpage')->name('homepage');
     
     Route::prefix('admin')->as('admin.')->group(function(){
         Route::get('/login',[AdminController::class, 'login'])->name('login');
@@ -73,7 +75,7 @@ Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(functio
     Route::get('/submit-ujian/{mapel}', [SiswaController::class,'submit_ujian'])->name('submit.ujian');
     Route::get('/presensi',[SiswaController::class,'presensi'])->name('presensi');
     Route::post('/submit-presensi',[SiswaController::class,'submit_presensi'])->name('submit.presensi');
-    Route::view('/riwayat-presensi','siswa.page.presensi.riwayat-presensi')->name('riwayat-presensi');
+    Route::get('/riwayat-presensi',[SiswaController::class,'riwayat_presensi'])->name('riwayat-presensi');
 });
 
 Route::get('/dashboard', function () {

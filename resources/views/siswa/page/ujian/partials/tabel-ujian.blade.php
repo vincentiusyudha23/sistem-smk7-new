@@ -1,15 +1,9 @@
-<table class="display w-full" id="js-table">
-    <!-- head -->
-    {{-- @php
-        dd($ujians);
-    @endphp --}}
+<table class="display responsive nowrap" width="100%" id="js-table-ujian">
     <thead>
         <tr>
             <th>No.</th>
             <th>Mata Pelajaran</th>
             <th>Kode Mapel</th>
-            <th>Jurusan</th>
-            <th>Kelas</th>
             <th>Tanggal</th>
             <th>Waktu Mulai</th>
             <th>Waktu Selesai</th>
@@ -25,8 +19,6 @@
                     <td>{{ $loop->index + 1 }}</td>
                     <td>{{ $ujian->mapel->nama_mapel }}</td>
                     <td>{{ $ujian->mapel->kode_mapel }}</td>
-                    <td>{{ $ujian->mapel->jurusan->jurusan }}</td>
-                    <td>{{ $ujian->mapel->kelas->kelas }}</td>
                     <td>{{ date('d/m/Y', strtotime($ujian->tanggal_ujian)) }}</td>
                     <td>{{ date('H:i', strtotime($ujian->start)) }}</td>
                     <td>{{ date('H:i', strtotime($ujian->end)) }}</td>
@@ -62,3 +54,22 @@
         @endforeach
     </tbody>
 </table>
+
+ <script>
+    $(document).ready(function(){
+        $('#js-table-ujian').DataTable({
+            responsive: true,
+            columnDefs : [{
+                    'target': '_all',
+                    'className': 'dt-head-center'
+                },
+                {
+                    'target': '_all',
+                    'className': 'dt-body-center'
+                },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 }
+            ]
+        });
+    });
+</script>

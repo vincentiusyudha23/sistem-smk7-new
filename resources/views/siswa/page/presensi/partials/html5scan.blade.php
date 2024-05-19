@@ -37,74 +37,58 @@
                     const token_pulang = "{{ $token['pulang'] }}";
                     
                     const html5QrCode = new Html5Qrcode("reader");
+
                     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                         document.getElementById('result').textContent = decodedText;
-                        let isScanner = false;
-
-                        if(token_masuk == decodedText && isScanner !== true){
-                            isScanner = true;
-                            $(document).ready(function(){ 
-                                var form_masuk = $('#form-masuk');
-                                var id_token = 1;
-                                var id_siswa = "{{ auth()->user()->siswa->id_siswa }}";
-                                $.ajax({
-                                    type: 'post',
-                                    url: "{{ route('siswa.submit.presensi') }}",
-                                    data: {
-                                        _token : "{{ csrf_token() }}",
-                                        nama : id_token,
-                                        id_siswa : id_siswa,
-                                        distance : distance
-                                    },
-                                    beforeSend: function(){
-                                        $('.loader').show();
-                                    },
-                                    success: function(response){
-                                        $('.loader').hide();
-                                        if(response.type === 'success'){
-                                            toastr.success(response.msg);
-                                        }
-                                        if(response.type === 'error'){
-                                            toastr.error(response.msg);
-                                        }
-                                        isScanner = false;
-                                    }
-                                });
-                            })
+                        var id_siswa = "{{ auth()->user()->siswa->id_siswa }}";
+                        if(token_masuk == decodedText){
+                            requestSubmitPresensi(id_siswa, 1, distance);
                         }
-                        if(token_pulang == decodedText && isScanner !== true){
-                            isScanner = true;
-                            $(document).ready(function(){ 
-                                var form_masuk = $('#form-masuk');
-                                var id_token = 2;
-                                var id_siswa = "{{ auth()->user()->siswa->id_siswa }}"
-                                $.ajax({
-                                    type: 'post',
-                                    url: "{{ route('siswa.submit.presensi') }}",
-                                    data: {
-                                        _token : "{{ csrf_token() }}",
-                                        nama : id_token,
-                                        id_siswa : id_siswa,
-                                        distance : distance
-                                    },
-                                    beforeSend: function(){
-                                        $('.loader').show();
-                                    },
-                                    success: function(response){
-                                        $('.loader').hide();
-                                        if(response.type === 'success'){
-                                            toastr.success(response.msg);
-                                        }
-                                        if(response.type === 'error'){
-                                            toastr.error(response.msg);
-                                        }
-
-                                        isScanner = false;
-                                    }
-                                });
-                            })
+                        if(token_pulang == decodedText){
+                            requestSubmitPresensi(id_siswa, 2, distance);
                         }
                     };
+
+                    function requestSubmitPresensi(id_siswa, id_token, distance){
+                        let isScanner = false;
+                        if(isScanner !== true){
+                            isScanner = true;
+                            $.ajax({
+                                type: 'post',
+                                url: "{{ route('siswa.submit.presensi') }}",
+                                data: {
+                                    _token : "{{ csrf_token() }}",
+                                    nama : id_token,
+                                    id_siswa : id_siswa,
+                                    distance : distance
+                                },
+                                beforeSend: function(){
+                                    $('.loader').show();
+                                },
+                                success: function(response){
+                                    $('.loader').hide();
+                                    if(response.type === 'success'){
+                                        Swal.fire({
+                                            title: 'Berhasil',
+                                            text: response.msg,
+                                            icon: 'success',
+                                            timer: 5000,
+                                            confirmButtonText: 'Tutup'
+                                        });
+                                    }
+                                    if(response.type === 'error'){
+                                        Swal.fire({
+                                            title: 'Gagal',
+                                            text: response.msg,
+                                            icon: 'error',
+                                            timer: 5000,
+                                            confirmButtonText: 'Tutup'
+                                        });
+                                    }
+                                    isScanner = false;
+                                }
+                            });
+                        }
+                    }
                     const config = { fps: 1, qrbox: { 
                         width: isMobile() ? 250 : 350, 
                         height: isMobile() ? 250 : 250

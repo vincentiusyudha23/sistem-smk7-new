@@ -9,13 +9,13 @@
         #reader {
             width: 80%;
             max-width: 80%;
-            height: 50vh;
+            height: 47vh;
             aspect-ratio: 1;
             border: 1px solid #ccc;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             background-color: white;
-            margin-bottom: 20px;
-        }
+            /* margin-bottom: 20px; */
+        };
         @media(min-width: 768px ){
             #reader {
                 width: 100%;
@@ -26,13 +26,13 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 background-color: white;
             }
-        }
+        };
     </style>
 @endpush
 
 @section('content')
     <x-layout-siswa>
-        <div class="w-full h-full flex flex-col justify-center items-center gap-10">
+        <div class="w-full flex flex-col justify-center items-center gap-10">
             <h1 class="text-2xl font-bold">Scan Barcode Presensi</h1>
 
             {{-- Message Alert --}}
@@ -55,23 +55,9 @@
             <div id="reader" class="hidden">
                 
             </div>
-            <h1 id="result"></h1>
+
             {{-- Btn to Riwayat --}}
             <a href="{{ route('siswa.riwayat-presensi') }}" class="btn btn-active">Riwayat Pesan</a>
-
-            {{-- Form Presensi --}}
-            <form id="form-masuk">
-              @csrf
-              <input type="hidden" name="nama" value="1">
-              <input type="hidden" name="id_siswa" value="{{ auth()->user()->siswa->id_siswa }}">
-            </form>
-            <form id="form-pulang" method="POST" action="{{ route('siswa.submit.presensi') }}">
-              @csrf
-              <input type="hidden" name="nama" value="2">
-              <input type="hidden" name="id_siswa" value="{{ auth()->user()->siswa->id_siswa }}">
-            </form>
-
-
         </div>
     </x-layout-siswa>
 @endsection

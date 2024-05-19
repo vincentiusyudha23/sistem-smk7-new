@@ -7,7 +7,6 @@
 @section('content')
     @php
         $soalUjian = json_decode($ujian->soal_ujian, true) ?? [];
-      
     @endphp
     <x-layout-siswa>
         <div class="w-full h-full pt-5">

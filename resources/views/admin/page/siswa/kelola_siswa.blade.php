@@ -47,7 +47,7 @@
                                         title: 'Success',
                                         text: response.msg,
                                         icon: 'success',
-                                        time: 1500
+                                        timer: 1500
                                     }).then( () => {
                                         location.reload();
                                     });
