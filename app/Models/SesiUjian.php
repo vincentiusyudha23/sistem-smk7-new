@@ -29,14 +29,14 @@ class SesiUjian extends Model
      * @param int $id_jurusan
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function getUjiansByKelasJurusan($id_kelas, $id_jurusan)
-    {
-        return self::select('sesi_ujians.*', 'mapels.id_kelas', 'mapels.id_jurusan')
-            ->join('mapels', 'sesi_ujians.id_mapel', '=', 'mapels.id_mapel')
-            ->where('mapels.id_kelas', $id_kelas)
-            ->where('mapels.id_jurusan', $id_jurusan)
-            ->latest();
-    }
+    // public static function getUjiansByKelasJurusan($id_kelas, $id_jurusan)
+    // {
+    //     return self::select('sesi_ujians.*', 'mapels.id_kelas', 'mapels.id_jurusan')
+    //         ->join('mapels', 'sesi_ujians.id_mapel', '=', 'mapels.id_mapel')
+    //         ->where('mapels.id_kelas', $id_kelas)
+    //         ->where('mapels.id_jurusan', $id_jurusan)
+    //         ->latest();
+    // }
 
     public function hasil_ujian(): HasMany
     {

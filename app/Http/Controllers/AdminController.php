@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Kelas;
-use App\Models\Mapel;
 use App\Models\Siswa;
 use App\Models\Jurusan;
 use App\Models\OrangTua;
@@ -42,19 +40,16 @@ class AdminController extends Controller
 
     public function akun_siswa()
     {
-        $kelas = Kelas::all();
-        $jurusan = Jurusan::all();
-        $siswas = Siswa::orderBy('created_at', 'desc')->with('kelas','jurusan','orangTua')->get();
+
+        $siswas = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
         
-        return view('admin.page.siswa.kelola_siswa', compact('kelas','jurusan','siswas'));
+        return view('admin.page.siswa.kelola_siswa', compact('siswas'));
     }
 
     public function akun_mapel()
     {
-        $kelas = Kelas::all();
-        $jurusan = Jurusan::all();
-        $mapels = Mapel::orderBy('created_at', 'desc')->with(['kelas', 'jurusan'])->get();
-        return view('admin.page.mapel.kelola_mapel', compact('kelas','jurusan', 'mapels'));
+        $mapels = Mapel::orderBy('created_at', 'desc')->get();
+        return view('admin.page.mapel.kelola_mapel', compact('mapels'));
     }
 
     public function presensi()
@@ -172,8 +167,6 @@ class AdminController extends Controller
                 Siswa::create([
                     'user_id' => $akun->id,
                     'id_orangtua' => $orang_tua->id_orangtua,
-                    'id_kelas' => $request->kelas,
-                    'id_jurusan' => $request->jurusan,
                     'password' => $request->password,
                     'nama' => $request->nama_siswa,
                     'nis' => $request->nis,
@@ -240,8 +233,6 @@ class AdminController extends Controller
                 'nis' => $request->nis,
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'password' => $request->password,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan
             ]);
 
             return response()->json([
@@ -286,8 +277,6 @@ class AdminController extends Controller
         if($akun){
             Mapel::create([
                 'user_id' => $akun->id,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan,
                 'password' => $request->password,
                 'kode_mapel' => $request->kode_mapel,
                 'nama_mapel' => $request->nama_mapel,
@@ -316,8 +305,6 @@ class AdminController extends Controller
                 'kode_mapel' => $request->kode_mapel,
                 'nama_guru' => $request->nama_guru,
                 'nip' => $request->nip,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan,
                 'password' => $request->password, 
             ]);
 
