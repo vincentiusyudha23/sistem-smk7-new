@@ -31,7 +31,7 @@
 @endpush
 
 @section('content')
-    <x-adminlayout>
+    <x-admin>
         <div class="w-full p-10 flex gap-10 justify-center">
                 <div class="box-detail border border-blue-600 rounded-md">
                     <div class="box-content-1 bg-blue-600 rounded-t-md">
@@ -78,7 +78,7 @@
                 <canvas id="myChart"  height="75"></canvas>
             </div>
             @include('admin.page.dashboard.partial.table_presensi')
-    </x-adminlayout>
+    </x-admin>
 @endsection
 
 @push('script')

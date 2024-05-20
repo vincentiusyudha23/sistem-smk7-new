@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <x-adminlayout>
+    <x-admin>
         <div class="w-full h-full flex pt-20">
             <div class="w-1/2 h-full flex flex-col justify-center items-center">
                 <strong class="mb-2 text-lg">Qr Code Masuk</strong>
@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-    </x-adminlayout>
+    </x-admin>
 @endsection
 
 @push('script')
