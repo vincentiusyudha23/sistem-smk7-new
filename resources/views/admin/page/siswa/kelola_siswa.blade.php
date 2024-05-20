@@ -7,12 +7,12 @@
 @endsection
 
 @section('content')
-    <x-admin>
+    <x-admin-all-layout>
         <h1 class="text-2xl font-bold my-2">Buat Akun Siswa</h1>
         @include('admin.page.siswa.partial.form_akun')
         <h1 class="text-2xl font-bold mt-10">List Akun Siswa</h1>
         @include('admin.page.siswa.partial.tabel_siswa')
-    </x-admin>
+    </x-admin-all-layout>
 @endsection
 
 @push('script')

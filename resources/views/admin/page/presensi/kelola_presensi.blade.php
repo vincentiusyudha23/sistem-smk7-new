@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <x-admin>
+    <x-admin-all-layout>
         <h1 class="text-2xl font-bold my-2">Data Presensi Siswa</h1>
         <div class="w-full flex justify-between">
             <div class="flex justify-center items-center">
@@ -44,7 +44,7 @@
             </div>
         </div>
         {{-- @include('admin.page.presensi.partial.tabel_presensi') --}}
-    </x-admin>
+    </x-admin-all-layout>
 @endsection
 
 @push('script')
