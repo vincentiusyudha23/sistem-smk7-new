@@ -7,12 +7,12 @@
 @endsection
 
 @section('content')
-    <x-admin-layout>
+    <x-adminlayout>
         <h1 class="text-2xl font-bold my-2">Buat Akun Mata Pelajaran</h1>
         @include('admin.page.mapel.partial.form_akun_mapel')
         <h1 class="text-2xl font-bold mt-10">List Mata Pelajaran</h1>
         @include('admin.page.mapel.partial.tabel_mapel')
-    </x-admin-layout>
+    </x-adminlayout>
 @endsection
 
 @push('script')
