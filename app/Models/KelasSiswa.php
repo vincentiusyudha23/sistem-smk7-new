@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\KelasJurusan;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class KelasSiswa extends Model
 {
@@ -11,4 +12,9 @@ class KelasSiswa extends Model
     protected $table = 'kelas_siswas';
     protected $fillable = ['id_kelas','id_siswa'];
     protected $primaryKey = 'id';
+
+    public function kelasJurusan()
+    {
+        return $this->hasOne(KelasJurusan::class);
+    }
 }

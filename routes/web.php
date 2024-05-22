@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MapelController;
 use App\Http\Controllers\SiswaController;
@@ -52,7 +53,12 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::get('/presensi',[AdminController::class, 'presensi'])->name('presensi');
     Route::get('/generate-qr',[AdminController::class, 'generate_qr_code'])->name('generate-qr');
     Route::post('/render_qr_code',[AdminController::class, 'render_qr_code'])->name('generate-qr.render');
-    Route::post('/updat_qr_code',[AdminController::class, 'update_qr_code'])->name('generate-qr.update');
+    Route::post('/update_qr_code',[AdminController::class, 'update_qr_code'])->name('generate-qr.update');
+    Route::get('/kelas-jurusan',[AdminController::class, 'kelas_jurusan'])->name('kelas_jurusan');
+    Route::post('/kelas-jurusan-store',[AdminController::class, 'store_kelas'])->name('store_kelas');
+    Route::get('/get-data-kelas',[DataController::class, 'getDataKelas'])->name('getDataKelas');
+    Route::get('/get-data-siswa',[DataController::class, 'getDataSiswa'])->name('getDataSiswa');
+    Route::get('/get-data-mapel',[DataController::class, 'getDataMapel'])->name('getDataMapel');
 });
     
 Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){

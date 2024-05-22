@@ -16,3 +16,21 @@ function getCurrentTimeOfDay($user = '')
         return 'Selamat Malam, '.$user;
     }
 }
+
+function getCapitalText($kelas)
+{
+    switch ($kelas) {
+        case 10:
+            return 'X';
+            break;
+        case 11:
+            return 'XI';
+            break;
+        case 12:
+            return 'XII';
+            break;
+        default:
+            return '';
+            break;
+    }
+}

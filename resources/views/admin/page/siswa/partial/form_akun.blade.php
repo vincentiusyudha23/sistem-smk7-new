@@ -37,23 +37,12 @@
             <div class="flex-grow">
                 <label class="form-control w-full"> 
                     <div class="label">
-                        <span class="label-text font-bold">Jurusan</span>
-                    </div>
-                    <select required name="jurusan" class="select select-sm select-bordered w-full">
-                        <option disabled selected>Pilih Jurusan</option>
-                        @foreach ($jurusan as $item)
-                            <option value="{{ $item->id_jurusan }}">{{ $item->jurusan }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <label class="form-control w-full"> 
-                    <div class="label">
                         <span class="label-text font-bold">Kelas</span>
                     </div>
                     <select required name="kelas" class="select select-sm select-bordered w-full">
                         <option disabled selected>Pilih kelas</option>
                         @foreach ($kelas as $item)
-                            <option value="{{ $item->id_kelas }}">{{ $item->kelas }}</option>
+                            <option value="{{ $item->id_kelas }}">{{ $item->nama_kelas }}</option>
                         @endforeach
                     </select>
                 </label>

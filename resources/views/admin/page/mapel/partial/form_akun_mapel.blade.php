@@ -41,28 +41,6 @@
                     </div>
                     <input type="text" placeholder="NIP Guru" name="nip" class="input input-sm input-bordered w-full" />
                 </label>
-                 <label class="form-control w-full"> 
-                    <div class="label">
-                        <span class="label-text font-bold">Jurusan</span>
-                    </div>
-                    <select required name="jurusan" class="select select-sm select-bordered w-full">
-                        <option disabled selected>Pilih Jurusan</option>
-                        @foreach ($jurusan as $item)
-                            <option value="{{ $item->id_jurusan }}">{{ $item->jurusan }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <label class="form-control w-full"> 
-                    <div class="label">
-                        <span class="label-text font-bold">Kelas</span>
-                    </div>
-                    <select required name="kelas" class="select select-sm select-bordered w-full">
-                        <option disabled selected>Pilih kelas</option>
-                        @foreach ($kelas as $item)
-                            <option value="{{ $item->id_kelas }}">{{ $item->kelas }}</option>
-                        @endforeach
-                    </select>
-                </label>
                 <div class="w-full h-full flex justify-end mt-8 gap-2 ">
                     <button type="submit" class="btn btn-sm btn-success text-white">Simpan</button>
                     <button type="submit" class="btn btn-sm btn-error text-white">Batalkan</button>
