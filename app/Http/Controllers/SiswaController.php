@@ -24,18 +24,13 @@ class SiswaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $id_kelas = Auth::user()->siswa->id_kelas;
-        $id_jurusan = Auth::user()->siswa->id_jurusan;
-        
-        $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
-
+    {   
         $presensi_masuk = PresensiMasuk::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
         $presensi_pulang = PresensiPulang::where('id_siswa', auth()->user()->siswa->id_siswa)->latest();
 
         $presensi = $presensi_masuk->union($presensi_pulang)->orderBy('created_at','desc')->get();
 
-        return view('siswa.page.dashboard.dashboard', compact('ujians','presensi'));
+        return view('siswa.page.dashboard.dashboard', compact('presensi'));
     }
 
     public function login()
@@ -67,12 +62,12 @@ class SiswaController extends Controller
 
     public function ujian()
     {   
-        $id_kelas = Auth::user()->siswa->id_kelas;
-        $id_jurusan = Auth::user()->siswa->id_jurusan;
+        // $id_kelas = Auth::user()->siswa->id_kelas;
+        // $id_jurusan = Auth::user()->siswa->id_jurusan;
         
-        $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
+        // $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
 
-        return view('siswa.page.ujian.ujian', compact('ujians'));
+        return view('siswa.page.ujian.ujian');
     }
     
     public function soal_ujian($id, $mapel)

@@ -1,8 +1,8 @@
 <div class="w-full bg-slate-200 rounded-lg p-5">
     <form class="w-full" id="form-sesi-ujian">
         @csrf
-        <div class="flex flex-row flex-wrap gap-3">
-            <div class="flex-grow">
+        <div class="flex w-full flex-row flex-wrap">
+            <div class="flex-grow w-1/2 px-1">
                 <label class="form-control w-full"> 
                     <div class="label">
                         <span class="label-text font-bold">Nama Mata Pelajaran</span>
@@ -17,23 +17,21 @@
                 </label>
                 <label class="form-control w-full"> 
                     <div class="label">
-                        <span class="label-text font-bold">Jurusan</span>
-                    </div>
-                    <input type="text" value="{{ auth()->user()->mapel->jurusan->jurusan }}" disabled class="input input-sm input-bordered w-full" />
-                </label>
-                <label class="form-control w-full"> 
-                    <div class="label">
-                        <span class="label-text font-bold">Kelas</span>
-                    </div>
-                    <input type="number" value="{{ auth()->user()->mapel->kelas->kelas }}" disabled class="input input-sm input-bordered w-full" />
-                </label>
-            </div>
-            <div class="flex-grow">
-                <label class="form-control w-full"> 
-                    <div class="label">
                         <span class="label-text font-bold">Tanggal Ujian</span>
                     </div>
                     <input type="date" name="tanggal_ujian" class="input input-sm input-bordered w-full" />
+                </label>
+            </div>
+            <div class="flex-grow w-1/2 px-1">
+                <label class="form-control"> 
+                    <div class="label">
+                        <span class="label-text font-bold">Kelas</span>
+                    </div>
+                    <select class="js-example-basic-multiple w-full" name="kelas[]" multiple="multiple">
+                        @foreach ($kelas as $item)
+                            <option value="{{ $item->id_kelas }}">{{ $item->nama_kelas }}</option>
+                        @endforeach
+                    </select>
                 </label>
                 <label class="form-control w-full"> 
                     <div class="label">
