@@ -31,7 +31,7 @@
                         formData.append('file_siswa', result.value);
                         formData.append('_token', '{{ csrf_token() }}');
 
-                        await $.ajax({x
+                        await $.ajax({
                             url: '{{ route('admin.siswa.import') }}',
                             type: 'POST',
                             data: formData,
