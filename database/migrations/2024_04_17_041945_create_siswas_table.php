@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id('id_siswa');
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreignId('id_orangtua')->references('id_orangtua')->on('orang_tuas')->cascadeOnDelete();
-            $table->foreignId('id_kelas')->references('id_kelas')->on('kelas')->cascadeOnDelete();
-            $table->foreignId('id_jurusan')->references('id_jurusan')->on('jurusans')->cascadeOnDelete();
             $table->string('password')->nullable();
             $table->string('nama');
-            $table->string('nis');
+            $table->string('nis')->unique();
             $table->date('tanggal_lahir');
             $table->timestamps();
         });

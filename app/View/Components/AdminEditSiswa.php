@@ -16,7 +16,6 @@ class AdminEditSiswa extends Component
         public $password,
         public $nis,
         public $tanggallahir,
-        public $jurusan,
         public $kelas,
         public $orangtua,
         public $nomorOrangtua,

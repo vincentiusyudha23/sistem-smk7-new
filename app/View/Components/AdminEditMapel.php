@@ -19,8 +19,6 @@ class AdminEditMapel extends Component
         public $kodeMapel,
         public $namaGuru,
         public $nip,
-        public $kelas,
-        public $jurusan
     ){}
 
     /**

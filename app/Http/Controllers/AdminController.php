@@ -3,20 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\Siswa;
 use App\Models\Jurusan;
 use App\Models\OrangTua;
+use App\Models\KelasSiswa;
 use App\Models\TokenQrCode;
 use Illuminate\Support\Str;
 use App\Imports\SiswaImport;
+use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AdminController extends Controller
@@ -42,24 +44,72 @@ class AdminController extends Controller
 
     public function akun_siswa()
     {
-        $kelas = Kelas::all();
-        $jurusan = Jurusan::all();
-        $siswas = Siswa::orderBy('created_at', 'desc')->with('kelas','jurusan','orangTua')->get();
-        
-        return view('admin.page.siswa.kelola_siswa', compact('kelas','jurusan','siswas'));
+
+        $siswas = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
+
+        $siswas = $siswas->map(function($item){
+            return [
+                'id_siswa' => $item->id_siswa,
+                'nama' => $item->nama,
+                'nis' => $item->nis,
+                'username' => $item->users->username,
+                'password' => $item->password,
+                'kelas' => $item->getKelas()->nama_kelas,
+                'id_kelas' => $item->kelas->id_kelas,
+                'tanggal_lahir' => $item->tanggal_lahir,
+                'orang_tua' => $item->orangTua->nama,
+                'nomor_telp' => $item->orangTua->nomor_telepon
+            ];
+        });
+
+        $kelas = KelasJurusan::orderBy('nama_kelas', 'asc')->get();
+        return view('admin.page.siswa.kelola_siswa', compact('siswas','kelas'));
     }
 
     public function akun_mapel()
     {
-        $kelas = Kelas::all();
-        $jurusan = Jurusan::all();
-        $mapels = Mapel::orderBy('created_at', 'desc')->with(['kelas', 'jurusan'])->get();
-        return view('admin.page.mapel.kelola_mapel', compact('kelas','jurusan', 'mapels'));
+        $mapels = Mapel::orderBy('created_at', 'desc')->get();
+        return view('admin.page.mapel.kelola_mapel', compact('mapels'));
     }
 
     public function presensi()
     {
         return view('admin.page.presensi.kelola_presensi');
+    }
+
+    public function kelas_jurusan()
+    {
+        $kelas = KelasJurusan::count();
+
+        return view('admin.page.kelas_jurusan.kelas-jurusan',compact('kelas'));
+    }
+
+    public function store_kelas(Request $request)
+    {
+        $request->validate([
+            'jurusan' => 'required', 
+            'kelas' => 'required',
+            'nama_kelas' => 'required'
+        ]);
+
+        try{
+            KelasJurusan::create([
+                'jurusan' => $request->jurusan,
+                'kelas' => $request->kelas,
+                'nama_kelas' => $request->nama_kelas
+            ]);
+            $count = KelasJurusan::count();
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Menambahkan Kelas Baru',
+                'count' => $count
+            ]);
+        } catch(\Exception $e){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Jurusan, Kelas, dan Nama kelas harus diisi!'
+            ]);
+        }
     }
 
     public function generate_qr_code()
@@ -148,14 +198,31 @@ class AdminController extends Controller
 
     public function store_siswa(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+            'username' => 'required|unique:users',
+            'password' => 'required',
+            'nama_siswa' => 'required',
+            'kelas' => 'required',
+            'nis' => 'required|unique:siswas,nis',
+            'tanggal_lahir' => 'required'
+        ], [
+            'username.required' => 'Username Harus Diisi',
+            'username.unique' => 'Username Sudah Ada',
+            'password.required' => 'Password Harus Diisi',
+            'nama_siswa.required' => 'Nama Harus Diisi',
+            'kelas.required' => 'Kelas Harus Diisi',
+            'nis.required' => 'NIS Harus Diisi',
+            'nis.unique' => 'NIS Sudah Ada!',
+            'tanggal_lahir.required' => 'Tanggal Lahir Harus Diisi'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ], 422);
+        }
+
         try {
-            $request->validate([
-                'username' => 'required|unique:users',
-                'password' => 'required',
-                'nama_siswa' => 'required',
-                'nis' => 'required',
-                'tanggal_lahir' => 'required'
-            ]);
     
             $akun = User::create([
                 'username' => $request->username,
@@ -169,15 +236,18 @@ class AdminController extends Controller
             ]);
     
             if($orang_tua && $akun){
-                Siswa::create([
-                    'user_id' => $akun->id,
-                    'id_orangtua' => $orang_tua->id_orangtua,
+                $siswa = Siswa::create([
+                        'user_id' => $akun->id,
+                        'id_orangtua' => $orang_tua->id_orangtua,
+                        'password' => $request->password,
+                        'nama' => $request->nama_siswa,
+                        'nis' => $request->nis,
+                        'tanggal_lahir' => $request->tanggal_lahir
+                    ]);
+                
+                KelasSiswa::create([
                     'id_kelas' => $request->kelas,
-                    'id_jurusan' => $request->jurusan,
-                    'password' => $request->password,
-                    'nama' => $request->nama_siswa,
-                    'nis' => $request->nis,
-                    'tanggal_lahir' => $request->tanggal_lahir
+                    'id_siswa' => $siswa->id_siswa
                 ]);
         
                 return response()->json([
@@ -196,7 +266,7 @@ class AdminController extends Controller
         } catch (\Exception $exception){
             return response()->json([
                 'type' => 'error',
-                'msg'  => 'Username Sudah Ada'
+                'msg'  => $exception->getMessage()
             ]);
         }
     }
@@ -235,13 +305,15 @@ class AdminController extends Controller
             $orang_tua->nomor_telepon = $request->nomor_telepon;
             $orang_tua->save();
 
+            $kelas = KelasSiswa::where('id_siswa',$siswa->id_siswa)->first();
+            $kelas->id_kelas = $request->kelas;
+            $kelas->save();
+
             $siswa->update([
                 'nama' => $request->nama_siswa,
                 'nis' => $request->nis,
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'password' => $request->password,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan
             ]);
 
             return response()->json([
@@ -277,28 +349,55 @@ class AdminController extends Controller
 
     public function store_mapel(Request $request)
     {
-        $akun = User::create([
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-            'role' => 'mapel'
+         $validator = Validator::make($request->all(),[
+            'username' => 'required|unique:users',
+            'password' => 'required',
+            'nama_mapel' => 'required',
+            'kode_mapel' => 'required|unique:mapels,kode_mapel',
+            'nama_guru' => 'required',
+            'nip' => 'required|unique:mapels,nip'
+        ], [
+            'username.required' => 'Username Harus Diisi',
+            'username.unique' => 'Username Sudah Ada',
+            'password.required' => 'Password Harus Diisi',
+            'nama_mapel.required' => 'Nama Mapel Harus Diisi',
+            'kode_mapel.required' => 'Kode Mapel Harus Diisi',
+            'kode_mapel.unique' => 'Kode Mapel Sudah Dipakai',
+            'nip.required' => 'NIP Harus Diisi',
+            'nip.unique' => 'NIP Sudah Ada!',
+            'nama_guru.required' => 'Nama Guru Harus Diisi'
         ]);
 
-        if($akun){
-            Mapel::create([
-                'user_id' => $akun->id,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan,
-                'password' => $request->password,
-                'kode_mapel' => $request->kode_mapel,
-                'nama_mapel' => $request->nama_mapel,
-                'nama_guru' => $request->nama_guru,
-                'nip' => $request->nip,
-            ]);
-    
-            return response()->json(['type' => 'success', 'msg' => 'Berhasil Membuat Akun Mapel']);
-        } else {
-            return response()->json(['type' => 'error', 'msg' => 'Gagal Membuat Akun Mapel']);
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ], 422);
         }
+
+        try{
+            $akun = User::create([
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'role' => 'mapel'
+            ]);
+
+            if($akun){
+
+                Mapel::create([
+                    'user_id' => $akun->id,
+                    'password' => $request->password,
+                    'kode_mapel' => $request->kode_mapel,
+                    'nama_mapel' => $request->nama_mapel,
+                    'nama_guru' => $request->nama_guru,
+                    'nip' => $request->nip,
+                ]);
+
+                return response()->json(['type' => 'success', 'msg' => 'Berhasil Membuat Akun Mapel']);
+            }
+        } catch(\Exception $exception){
+            return response()->json(['type' => 'error', 'msg' => 'Gagal Membuat Akun Mapel']);
+        };
+
     }
 
     public function update_mapel(Request $request)
@@ -316,8 +415,6 @@ class AdminController extends Controller
                 'kode_mapel' => $request->kode_mapel,
                 'nama_guru' => $request->nama_guru,
                 'nip' => $request->nip,
-                'id_kelas' => $request->kelas,
-                'id_jurusan' => $request->jurusan,
                 'password' => $request->password, 
             ]);
 
