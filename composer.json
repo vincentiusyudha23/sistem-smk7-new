@@ -14,7 +14,8 @@
         "maatwebsite/excel": "^3.1",
         "rappasoft/laravel-livewire-tables": "^3.2",
         "simplesoftwareio/simple-qrcode": "^4.2",
-        "yajra/laravel-datatables": "10.0"
+        "yajra/laravel-datatables": "10.0",
+        "ext-imagick": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
