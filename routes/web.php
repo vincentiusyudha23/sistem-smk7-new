@@ -66,11 +66,13 @@ Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(functio
     Route::get('/sesiujian',[MapelController::class,'sesi_ujian'])->name('sesi-ujian');
     Route::post('/sesiujian',[MapelController::class,'store_sesiujian'])->name('sesi-ujian.store');
     Route::post('/sesiujian-edit',[MapelController::class,'update_sesi_ujian'])->name('sesi-ujian.update');
+    Route::get('/sesiujian-delete',[MapelController::class,'delete_sesi'])->name('sesi-ujian.delete');
     Route::post('/update-status',[MapelController::class,'update_status'])->name('sesi_ujian.update.status');
     Route::get('/soal-ujian/{id}',[MapelController::class,'soal_ujian'])->name('soal-ujian');
     Route::post('/soal-ujian',[MapelController::class,'store_soal_ujian'])->name('soal-ujian.store');
     Route::get('/hasil-ujian',[MapelController::class,'hasil_ujian'])->name('hasil-ujian');
     Route::get('/hasil-ujian-siswa/{id}',[MapelController::class,'hasil_ujian_siswa'])->name('hasil-ujian-siswa');
+    Route::get('/get-data-sesi/{id_mapel}', [DataController::class, 'getDataSesi'])->name('getDataSesi');
 });
 
 Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(function(){

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\SesiUjian;
 use App\Models\HasilUjian;
+use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Models\SesiUjianKelas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Redirect;
 
@@ -43,7 +45,9 @@ class MapelController extends Controller
     {
         $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->orderBy('created_at', 'desc')->get();
 
-        return view('mapel.page.sesiUjian.sesi-ujian', compact('sesi'));
+        $kelas = KelasJurusan::orderBy('created_at', 'desc')->get();
+
+        return view('mapel.page.sesiUjian.sesi-ujian', compact('sesi','kelas'));
     }
 
     public function soal_ujian($id)
@@ -54,19 +58,33 @@ class MapelController extends Controller
 
     public function store_sesiujian(Request $request): JsonResponse
     {
+        $request->validate([
+            'tanggal_ujian' => 'required',
+            'kelas' => 'required',
+            'start' => 'required',
+            'end' => 'required'
+        ]);
+        // dd($request->all());
         try{
-            $request->validate([
-                'tanggal_ujian' => 'required',
-                'start' => 'required',
-                'end' => 'required'
-            ]);
+            $sesi = SesiUjian::create([
+                    'id_mapel' => auth()->user()->mapel->id_mapel,
+                    'tanggal_ujian' => $request->tanggal_ujian,
+                    'start' => $request->start,
+                    'end' => $request->end
+                ]);
 
-            SesiUjian::create([
-                'id_mapel' => auth()->user()->mapel->id_mapel,
-                'tanggal_ujian' => $request->tanggal_ujian,
-                'start' => $request->start,
-                'end' => $request->end
-            ]);
+            $sesi_kelas = [];
+
+            foreach ($request->kelas as $key => $value) {
+                $data = [
+                    'id_sesi_ujian' => $sesi->id,
+                    'id_kelas' => $value
+                ];
+
+                $sesi_kelas[] = $data;
+            }
+
+            SesiUjianKelas::insert($sesi_kelas);
 
             return response()->json([
                 'type' => 'success',
@@ -142,6 +160,17 @@ class MapelController extends Controller
             'type' => 'success',
             'msg' => 'Berhasil Update Status'
         ]);
+    }
+
+    public function delete_sesi(Request $request)
+    {
+        $sesi = SesiUjian::find($request->id_sesi);
+        try{
+            $sesi->delete();
+            return response()->json(['type'=>'success','msg'=>'Berhasil Menghapus Sesi Ujian']);
+        }catch(\Exception $e){
+            return response()->json(['type'=>'error', 'msg' => $e->getMessage()]);
+        }
     }
 
     /**

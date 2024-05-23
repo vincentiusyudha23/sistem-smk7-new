@@ -13,7 +13,7 @@
     </thead>
     <tbody>
         <!-- row 1 -->
-        @foreach ($ujians as $ujian)
+        {{-- @foreach ($ujians as $ujian)
             @if ($ujian->soal_ujian)
                 <tr>
                     <td>{{ $loop->index + 1 }}</td>
@@ -51,7 +51,7 @@
                     </td>
                 </tr>
             @endif
-        @endforeach
+        @endforeach --}}
     </tbody>
 </table>
 

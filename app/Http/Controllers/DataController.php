@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Mapel;
 use App\Models\Siswa;
+use App\Models\SesiUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Models\SesiUjianKelas;
 
 class DataController extends Controller
 {
@@ -66,5 +68,29 @@ class DataController extends Controller
         });
 
         return response()->json(['data' => $mapel]);
+    }
+
+    public function getDataSesi($id_mapel)
+    {
+        $sesi = SesiUjian::where('id_mapel', $id_mapel)->get();
+
+        $sesi = $sesi->map(function($item){
+
+            $getIdKelas = SesiUjianKelas::where('id_sesi_ujian', $item->id)->pluck('id_kelas')->toArray();
+
+            $kelas = KelasJurusan::whereIn('id_kelas',$getIdKelas)->pluck('nama_kelas')->toArray();
+
+            return [
+                'id_sesi' => $item->id,
+                'mata_pelajaran' => $item->mapel->nama_mapel,
+                'kelas' => $kelas,
+                'tanggal' => $item->tanggal_ujian,
+                'start' => $item->start,
+                'end' => $item->end,
+                'status' => $item->status
+            ];
+        });
+
+        return response()->json(['data' => $sesi]);
     }
 }
