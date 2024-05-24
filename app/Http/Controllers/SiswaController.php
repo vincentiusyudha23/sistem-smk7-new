@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PresensiMasuk;
 use App\Models\PresensiPulang;
+use App\Models\SesiUjianKelas;
 use Illuminate\Http\JsonResponse;
 use App\Services\SendNotification;
 use Illuminate\Support\Facades\Auth;
@@ -62,11 +63,6 @@ class SiswaController extends Controller
 
     public function ujian()
     {   
-        // $id_kelas = Auth::user()->siswa->id_kelas;
-        // $id_jurusan = Auth::user()->siswa->id_jurusan;
-        
-        // $ujians = SesiUjian::getUjiansByKelasJurusan($id_kelas,$id_jurusan)->get();
-
         return view('siswa.page.ujian.ujian');
     }
     

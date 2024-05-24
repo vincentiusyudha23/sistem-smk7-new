@@ -110,4 +110,24 @@ class DataController extends Controller
     {
         return Excel::download(new SiswaTemplate, 'template_siswa.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
+
+    public function getSesiUjian()
+    {
+        $id_kelas = auth()->user()->siswa->kelas->id_kelas;
+        $ujian = SesiUjianKelas::where('id_kelas', $id_kelas)->get();
+        
+        $ujian = $ujian->map(function($item){
+            $sesi = SesiUjian::where('id', $item->id_sesi_ujian)->first();
+
+            return [
+                'mata_pelajaran' => $sesi->mapel->nama_mapel,
+                'kode_mapel' => $sesi->mapel->kode_mapel,
+                'tanggal_ujian' => $sesi->tanggal_ujian->format('d/m/Y'),
+                'start' => $sesi->start,
+                'end' => $sesi->end,
+                'status' => $sesi->status
+            ];
+        });
+        return response()->json(['data' => $ujian]);
+    }
 }

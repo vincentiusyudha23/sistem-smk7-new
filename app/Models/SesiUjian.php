@@ -17,6 +17,8 @@ class SesiUjian extends Model
     protected $fillable = ['id_mapel','tanggal_ujian','start','end','status','soal_ujian'];
     protected $primaryKey = 'id';
 
+    protected $casts = [ 'tanggal_ujian' => 'datetime'];
+
     public function mapel(): BelongsTo
     {
         return $this->belongsTo(Mapel::class, 'id_mapel', 'id_mapel');

@@ -88,6 +88,7 @@ Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(functio
     Route::get('/presensi',[SiswaController::class,'presensi'])->name('presensi');
     Route::post('/submit-presensi',[SiswaController::class,'submit_presensi'])->name('submit.presensi');
     Route::get('/riwayat-presensi',[SiswaController::class,'riwayat_presensi'])->name('riwayat-presensi');
+    Route::get('/sesi-ujian', [DataController::class, 'getSesiUjian'])->name('getSesiUjian');
 });
 
 Route::get('/dashboard', function () {

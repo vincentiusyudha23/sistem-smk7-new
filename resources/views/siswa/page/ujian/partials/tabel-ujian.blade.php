@@ -7,7 +7,7 @@
             <th>Tanggal</th>
             <th>Waktu Mulai</th>
             <th>Waktu Selesai</th>
-            <th>Aksi</th>
+            {{-- <th>Aksi</th> --}}
             <th>Status</th>
         </tr>
     </thead>
@@ -55,9 +55,38 @@
     </tbody>
 </table>
 
- <script>
+<script>
     $(document).ready(function(){
         $('#js-table-ujian').DataTable({
+            ajax: "{{ route('siswa.getSesiUjian') }}",
+            columns: [
+                {data: null, orderable: false, searchable: false},
+                {data: 'mata_pelajaran'},
+                {data: 'kode_mapel'},
+                {data: 'tanggal_ujian'},
+                {data: 'start'},
+                {data: 'end'},
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row){
+                        var render;
+                        if (row.status == 0){
+                            render = '<a href="javascript:void(0)" class="px-2 py-1 btn btn-xs btn-circle btn-warning text-white w-full">Belum Mulai</a>'                     
+                        }
+                        
+                        if (row.status == 1){
+                            render = '<a href="javascript:void(0)" class="px-2 py-1 btn btn-xs btn-success btn-circle text-white w-full">Sedang Mulai</a>'                            
+                        }
+                        
+                        if (row.status == 2){
+                            render = '<a href="javascript:void(0)" class="px-2 py-1 btn btn-xs btn-error btn-circle text-white w-full">Selesai</a>'                            
+                        }
+                        return render;
+                    }
+                }
+            ],
             responsive: true,
             columnDefs : [{
                     'target': '_all',
@@ -67,9 +96,12 @@
                     'target': '_all',
                     'className': 'dt-body-center'
                 },
-                { responsivePriority: 1, targets: 0 },
-                { responsivePriority: 2, targets: -1 }
-            ]
+                { width: '20px', target: 0 },
+            ],
+            createdRow: function(row, data, dataIndex) {
+                // Set nomor urut
+                $('td:eq(0)', row).html(dataIndex + 1);
+            }
         });
     });
 </script>
