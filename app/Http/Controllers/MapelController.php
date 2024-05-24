@@ -146,20 +146,27 @@ class MapelController extends Controller
         $status = $request->status ?? 0;
         $sesi = SesiUjian::find($request->id_sesi);
 
-        if($status == 0){
-            $sesi->update([
-                'status' => 1
-            ]);
-        } else{
-            $sesi->update([
-                'status' => 2
+        if(!empty($sesi->soal_ujian)){
+            if($status == 0){
+                $sesi->update([
+                    'status' => 1
+                ]);
+            } else{
+                $sesi->update([
+                    'status' => 2
+                ]);
+            }
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Update Status'
             ]);
         }
 
         return response()->json([
-            'type' => 'success',
-            'msg' => 'Berhasil Update Status'
+            'type' => 'error',
+            'msg' => 'Belum ada soal ujian!'
         ]);
+
     }
 
     public function delete_sesi(Request $request)
@@ -171,53 +178,5 @@ class MapelController extends Controller
         }catch(\Exception $e){
             return response()->json(['type'=>'error', 'msg' => $e->getMessage()]);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

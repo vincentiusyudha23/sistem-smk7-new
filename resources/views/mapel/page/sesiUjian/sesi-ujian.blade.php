@@ -90,6 +90,9 @@
                                 el.parent().html(_html);
                             }
                         }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg);
+                        }
                     }
                 });
             });
@@ -191,22 +194,34 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row){
-                            var url = $(`#my_modal_${row.id_sesi}`).data('url');
-                            return `
-                                <div class="tooltip" data-tip="Buat Soal">
-                                    <a href="${url}" class="btn btn-square btn-sm btn-warning text-white">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/></svg>
-                                    </a>
-                                </div>
-                                <button class="btn btn-sm btn-success btn-squer text-white"  onclick="my_modal_${row.id_sesi}.showModal()">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
-                                </button>
-                                <div class="tooltip" data-tip="Hapus Sesi Ujian">
-                                    <a class="btn btn-sm btn-error text-white btn-delete-sesi" data-id="${row.id_sesi}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
-                                    </a>
-                                </div>
-                            `;
+                            var render = '';
+                            
+                            if(row.soal){
+                                render = `
+                                    <div class="tooltip" data-tip="Lihat/Edit Soal">
+                                        <a href="{{ url('/mapel/soal-ujian/${row.id_sesi}') }}" class="btn btn-sm btn-warning text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+                                        </a>
+                                    </div>`;
+                            } else {
+                                render = `
+                                    <div class="tooltip" data-tip="Buat Soal">
+                                        <a href="{{ url('/mapel/soal-ujian/${row.id_sesi}') }}" class="btn btn-sm btn-warning text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/></svg>
+                                        </a>
+                                    </div>`;
+                            }
+                                render += `
+                                    <button class="btn btn-sm btn-success btn-squer text-white"  onclick="my_modal_${row.id_sesi}.showModal()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
+                                    </button>
+                                    <div class="tooltip" data-tip="Hapus Sesi Ujian">
+                                        <a class="btn btn-sm btn-error text-white btn-delete-sesi" data-id="${row.id_sesi}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
+                                        </a>
+                                    </div>`;
+                            return render;
+                            
                         }
                     },
                 ],

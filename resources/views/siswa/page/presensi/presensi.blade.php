@@ -53,7 +53,7 @@
             </div>
 
             {{-- Btn to Riwayat --}}
-            <a href="{{ route('siswa.riwayat-presensi') }}" class="btn btn-active">Riwayat Pesan</a>
+            <a href="{{ route('siswa.riwayat-presensi') }}" class="btn btn-active">Riwayat Presensi</a>
         </div>
     </x-layout-siswa>
 @endsection
