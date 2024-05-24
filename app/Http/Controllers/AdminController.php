@@ -150,7 +150,7 @@ class AdminController extends Controller
         $kelas = KelasJurusan::find($request->id_kelas);
 
         if($kelas){
-            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id_siswa','id')->toArray();
+            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id','id_siswa')->toArray();
 
             if(count($kelas_siswa) > 0){
                 foreach($kelas_siswa as $key => $siswa){
