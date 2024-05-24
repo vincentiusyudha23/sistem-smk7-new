@@ -132,7 +132,6 @@
                     position => {
                         const { latitude, longitude } = position.coords;
                         resolve({ latitude, longitude });
-                        console.log({ latitude, longitude });
                     },
                     error => {
                         reject(error);

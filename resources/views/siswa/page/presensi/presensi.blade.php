@@ -14,19 +14,15 @@
             border: 1px solid #ccc;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             background-color: white;
-            /* margin-bottom: 20px; */
-        };
-        @media(min-width: 768px ){
+        }
+
+        @media (min-width: 640px) {
             #reader {
                 width: 100%;
                 max-width: 400px;
                 height: 300px;
-                aspect-ratio: 1;
-                border: 1px solid #ccc;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                background-color: white;
             }
-        };
+        }
     </style>
 @endpush
 
