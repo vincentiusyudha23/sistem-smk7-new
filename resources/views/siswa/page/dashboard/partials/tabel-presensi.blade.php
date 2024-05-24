@@ -7,8 +7,6 @@
             <th>Tanggal</th>
             <th>Nama Siswa</th>
             <th>NIS</th>
-            <th>Jurusan</th>
-            <th>Kelas</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -20,8 +18,6 @@
                 <td>{{  date('d/m/Y', strtotime($riwayat->created_at)) }}</td>
                 <td>{{ auth()->user()->siswa->nama }}</td>
                 <td>{{ auth()->user()->siswa->nis }}</td>
-                <td>{{ auth()->user()->siswa->jurusan->jurusan }}</td>
-                <td>{{ auth()->user()->siswa->kelas->kelas }}</td>
                 <td>{{ $riwayat->status }}</td>
             </tr>
         @endforeach
