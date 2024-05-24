@@ -45,26 +45,8 @@ class AdminController extends Controller
 
     public function akun_siswa()
     {
-
-        $siswas = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
-
-        $siswas = $siswas->map(function($item){
-            return [
-                'id_siswa' => $item->id_siswa,
-                'nama' => $item->nama,
-                'nis' => $item->nis,
-                'username' => $item->users->username,
-                'password' => $item->password,
-                'kelas' => $item->getKelas()->nama_kelas,
-                'id_kelas' => $item->kelas->id_kelas,
-                'tanggal_lahir' => $item->tanggal_lahir,
-                'orang_tua' => $item->orangTua->nama,
-                'nomor_telp' => $item->orangTua->nomor_telepon
-            ];
-        });
-
         $kelas = KelasJurusan::orderBy('nama_kelas', 'asc')->get();
-        return view('admin.page.siswa.kelola_siswa', compact('siswas','kelas'));
+        return view('admin.page.siswa.kelola_siswa', compact('kelas'));
     }
 
     public function akun_mapel()
@@ -150,12 +132,11 @@ class AdminController extends Controller
         $kelas = KelasJurusan::find($request->id_kelas);
 
         if($kelas){
-            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id','id_siswa')->toArray();
+            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id_siswa','id')->toArray();
 
             if(count($kelas_siswa) > 0){
                 foreach($kelas_siswa as $key => $siswa){
                     $siswa = Siswa::find($siswa)->delete();
-                    $kelasSiswa = KelasSiswa::find($key)->delete();
                 }
             };
 
