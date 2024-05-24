@@ -12,4 +12,9 @@ class KelasJurusan extends Model
     protected $table = 'kelas_jurusans';
     protected $fillable = ['kelas','jurusan','nama_kelas'];
     protected $primaryKey = 'id_kelas';
+
+    public function siswa()
+    {
+        return $this->belongsToMany(Siswa::class, 'kelas_siswas', 'id_kelas', 'id_siswa');
+    }
 }

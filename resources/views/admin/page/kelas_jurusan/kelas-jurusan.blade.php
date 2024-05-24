@@ -32,12 +32,15 @@
                         </label>
                     </div>
                     <div class="w-full flex justify-end items-center mt-2 gap-2">
-                        <a href="javascript:void(0)" class="btn btn-warning btn-sm text-white">
+                        <a href="javascript:void(0)" class="btn btn-warning btn-sm text-white btn-import-kelas">
                             Import
                         </a>
                         <button type="submit" class="btn btn-success btn-sm text-white">
                             Simpan
                         </button>
+                    </div>
+                    <div class="w-full inline-flex p-0 m-0 justify-end">
+                        <span class="text-xs font-light"><sup>*</sup>Template file import kelas. <a href="{{ route('admin.download.template.kelas') }}" class="text-blue-600">Unduh</a></span>
                     </div>
                 </form>
             </div>
@@ -47,7 +50,9 @@
             </div>
         </div>
         <div class="w-full p-3">
-            <h1 class="text-2xl font-bold mb-2">List Kelas</h1>
+            <div class="w-full inline-flex justify-between">
+                <h1 class="text-2xl font-bold mb-2">List Kelas</h1>
+            </div>
             <table class="display" style="width: 100%" id="js-table-kelas">
                 <thead>
                     <tr>
@@ -56,6 +61,7 @@
                         <th>Kelas</th>
                         <th>Nama Kelas</th>
                         <th>Total Siswa</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +74,60 @@
 @push('script')
     <script>
         $(document).ready(function(){
+            $(document).on('click', '.btn-import-kelas', function(){
+                 Swal.fire({
+                    title: "Select File",
+                    input: "file",
+                    inputAttributes: {
+                        "accept": ".xls, .xlsx",
+                        "aria-label": "upload File Excel Anda"
+                }}).then( async (result) => {
+                    if(result.value){
+                        const formData = new FormData();
+                        formData.append('template_kelas', result.value);
+                        formData.append('_token','{{ csrf_token() }}');
+
+                        Swal.fire({
+                            title: 'Uploading...',
+                            text: 'Harap tunggu, kami sedang memproses file anda.',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        await $.ajax({
+                            url: '{{ route('admin.kelas.import') }}',
+                            type: 'POST',
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function(response){
+                                Swal.hideLoading()
+                                if(response.type === "success"){
+                                   Swal.fire({
+                                        title: 'Success',
+                                        text: response.msg,
+                                        icon: 'success',
+                                        timer: 1500
+                                    }).then( () => {
+                                        $('.count-kelas').text(response.count);
+                                        $('#js-table-kelas').DataTable().ajax.reload();
+                                    });
+                                }
+                                if(response.type === "error"){
+                                    Swal.fire({
+                                        title: 'Gagal',
+                                        text: response.msg,
+                                        icon: 'error',
+                                    });
+                                }
+                            }
+                        });
+                    };
+                });
+            });
             $(document).on('submit','#form-kelas_jurusan', function(e){
                 e.preventDefault();
                 var formData = new FormData(this);
@@ -98,6 +158,46 @@
                     }
                 });
             });
+
+             $(document).on('click', '.btn-delete-kelas', function(){
+                var el = $(this);
+                
+                
+                Swal.fire({
+                    title: "Hapus Kelas?",
+                    icon: 'warning',
+                    text: 'Menghapus data kelas, akan menghapus juga data siswa!',
+                    showCancelButton: true,
+                    confirmButtonColor: "#dc3545",
+                    confirmButtonText: "Hapus",
+                }).then(async (result) => {
+                    if(result.isConfirmed){
+                        var id_kelas = el.data('id');
+                        $.ajax({
+                            type: 'GET',
+                            url: '{{ route('admin.kelas.delete') }}',
+                            data: {
+                                id_kelas: id_kelas
+                            },
+                            beforeSend: function(){
+                                $('.loader').show();
+                            },
+                            success: function(response){
+                                $('.loader').hide();
+                                if(response.type == 'success'){
+                                    toastr.success(response.msg);
+                                    $('.count-kelas').text(response.count);
+                                    $('#js-table-kelas').DataTable().ajax.reload();
+                                };
+                                if(response.type == 'error'){
+                                    toastr.error(response.msg);
+                                };
+                            }
+                        });
+                    }
+                })
+            })
+
             $('#js-table-kelas').DataTable({
                 ajax: '{{ route('admin.getDataKelas') }}',
                 columns: [
@@ -105,9 +205,20 @@
                     { data: 'jurusan'},
                     { data: 'kelas' },
                     { data: 'nama_kelas' },
-                    { data: 'total_siswa' }
+                    { data: 'total_siswa' },
+                    { 
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row){
+                            return `<a href="javascript:void(0)" class="btn btn-error btn-sm text-white btn-delete-kelas" data-id="${row.id_kelas}">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
+                                </a>`
+                        }
+                    }
                 ],
-                columnDefs : [{
+                columnDefs : [
+                    {
                         'target': '_all',
                         'className': 'dt-head-center'
                     },
@@ -115,13 +226,15 @@
                         'target': '_all',
                         'className': 'dt-body-center'
                     },
-                    { width: '50px', target: 0 }
+                    { width: '30px', target: 0 },
                 ],
                 createdRow: function(row, data, dataIndex) {
                     // Set nomor urut
                     $('td:eq(0)', row).html(dataIndex + 1);
                 }
             });
+
+           
         });
     </script>
 @endpush
