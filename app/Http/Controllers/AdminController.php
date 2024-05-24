@@ -150,13 +150,13 @@ class AdminController extends Controller
         $kelas = KelasJurusan::find($request->id_kelas);
 
         if($kelas){
-            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id_siswa')->toArray();
+            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id_siswa','id')->toArray();
 
             if(count($kelas_siswa) > 0){
-                foreach($kelas_siswa as $siswa){
+                foreach($kelas_siswa as $key => $siswa){
                     $siswa = Siswa::find($siswa)->delete();
+                    $kelasSiswa = KelasSiswa::find($key)->delete();
                 }
-                $kelas_siswa->delete();
             };
 
             $kelas->delete();
