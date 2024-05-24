@@ -56,9 +56,13 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::post('/update_qr_code',[AdminController::class, 'update_qr_code'])->name('generate-qr.update');
     Route::get('/kelas-jurusan',[AdminController::class, 'kelas_jurusan'])->name('kelas_jurusan');
     Route::post('/kelas-jurusan-store',[AdminController::class, 'store_kelas'])->name('store_kelas');
+    Route::post('/import_kelas',[AdminController::class, 'import_kelas'])->name('kelas.import');
+    Route::get('/delete_kelas',[AdminController::class, 'delete_kelas'])->name('kelas.delete');
     Route::get('/get-data-kelas',[DataController::class, 'getDataKelas'])->name('getDataKelas');
     Route::get('/get-data-siswa',[DataController::class, 'getDataSiswa'])->name('getDataSiswa');
     Route::get('/get-data-mapel',[DataController::class, 'getDataMapel'])->name('getDataMapel');
+    Route::get('/template_kelas',[DataController::class, 'template_kelas'])->name('download.template.kelas');
+    Route::get('/template_siswa',[DataController::class, 'template_siswa'])->name('download.template.siswa');
 });
     
 Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){

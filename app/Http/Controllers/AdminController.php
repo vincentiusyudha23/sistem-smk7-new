@@ -10,6 +10,7 @@ use App\Models\OrangTua;
 use App\Models\KelasSiswa;
 use App\Models\TokenQrCode;
 use Illuminate\Support\Str;
+use App\Imports\KelasImport;
 use App\Imports\SiswaImport;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
@@ -110,6 +111,64 @@ class AdminController extends Controller
                 'msg' => 'Jurusan, Kelas, dan Nama kelas harus diisi!'
             ]);
         }
+    }
+
+    public function import_kelas(Request $request)
+    {
+        $request->validate([
+            'template_kelas' => 'required|mimes:xlsx,xls,csv|max:2048'
+        ]);
+
+        if($request->hasFile('template_kelas')){
+            $file = $request->file('template_kelas');
+
+            $import = Excel::import(new KelasImport, $file);
+
+            if($import){
+                $count = KelasJurusan::count();
+                return response()->json([
+                    'type' => 'success',
+                    'msg' => 'Berhasil Import Data Kelas',
+                    'count' => $count
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'msg' => 'Gagal membuat data kelas.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'type' => 'error',
+            'msg' => 'File tidak ditemukan / tidak valid'
+        ]);
+    }
+
+    public function delete_kelas(Request $request)
+    {
+        $kelas = KelasJurusan::find($request->id_kelas);
+
+        if($kelas){
+            $kelas_siswa = KelasSiswa::where('id_kelas', $kelas->id_kelas)->pluck('id_siswa')->toArray();
+
+            if(count($kelas_siswa) > 0){
+                foreach($kelas_siswa as $siswa){
+                    $siswa = Siswa::find($siswa)->delete();
+                }
+                $kelas_siswa->delete();
+            };
+
+            $kelas->delete();
+            $count = KelasJurusan::count();
+            return response()->json([
+                'type'=>'success',
+                'msg'=>'Berhasil Menghapus Kelas.',
+                'count' => $count
+            ]);
+        }
+
+        return response()->json(['type'=>'error', 'msg' => 'Kelas Tidak Ditemukan.']);
     }
 
     public function generate_qr_code()
@@ -448,53 +507,4 @@ class AdminController extends Controller
         ]);
     }
 
-    
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

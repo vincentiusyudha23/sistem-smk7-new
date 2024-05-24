@@ -7,20 +7,23 @@ use App\Models\Siswa;
 use App\Models\SesiUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Exports\KelasTemplate;
+use App\Exports\SiswaTemplate;
 use App\Models\SesiUjianKelas;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DataController extends Controller
 {
     public function getDataKelas()
     {
-        $kelas = KelasJurusan::all();
+        $kelas = KelasJurusan::orderBy('id_kelas', 'desc')->get();
         $kelas = $kelas->map(function($item){
             return [
                 'id_kelas' => $item->id_kelas,
                 'jurusan' => $item->jurusan,
                 'kelas' => getCapitalText($item->kelas),
                 'nama_kelas' => $item->nama_kelas,
-                'total_siswa' => 10
+                'total_siswa' => count($item->siswa)
             ];
         });
 
@@ -32,8 +35,10 @@ class DataController extends Controller
     public function getDataSiswa()
     {
         $siswa = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
-
+        
         $siswa = $siswa->map(function($item){
+            $all_kelas = KelasJurusan::pluck('nama_kelas','id_kelas')->toArray();
+            
             return [
                 'id_siswa' => $item->id_siswa,
                 'nama' => $item->nama,
@@ -41,6 +46,7 @@ class DataController extends Controller
                 'username' => $item->users->username,
                 'password' => $item->password,
                 'kelas' => $item->getKelas()->nama_kelas,
+                'all_kelas' => $all_kelas,
                 'id_kelas' => $item->kelas->id_kelas,
                 'tanggal_lahir' => $item->tanggal_lahir,
                 'orang_tua' => $item->orangTua->nama,
@@ -92,5 +98,15 @@ class DataController extends Controller
         });
 
         return response()->json(['data' => $sesi]);
+    }
+
+    public function template_kelas()
+    {
+        return Excel::download(new KelasTemplate, 'template_kelas.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function template_siswa()
+    {
+        return Excel::download(new SiswaTemplate, 'template_siswa.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }
