@@ -7,8 +7,15 @@ use Illuminate\Support\Facades\Http;
 
 class SendNotification
 {
-    private $api_key = 'GE2vfRDLneB@wSCLSt+R';
+    private $api_key;
     private $base_url = 'https://api.fonnte.com/send';
+
+    public function __construct()
+    {
+        $api_key = env('API_SMS_KEY');
+        $this->api_key = $api_key;
+        return $this;
+    }
 
     public function sendMessageMasuk($number, $siswa)
     {

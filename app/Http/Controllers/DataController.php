@@ -93,7 +93,8 @@ class DataController extends Controller
                 'tanggal' => $item->tanggal_ujian,
                 'start' => $item->start,
                 'end' => $item->end,
-                'status' => $item->status
+                'status' => $item->status,
+                'soal' => $item->soal_ujian
             ];
         });
 
