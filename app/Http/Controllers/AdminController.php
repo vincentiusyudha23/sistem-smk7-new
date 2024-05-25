@@ -36,12 +36,13 @@ class AdminController extends Controller
     }
     public function index()
     {   
-        $siswa = Siswa::pluck('id_siswa');
-        $presensiMasuk = PresensiMasuk::where('created_at',Carbon::today())->count(); 
-        $presensiPulang = PresensiPulang::where('created_at',Carbon::today())->count();
+        $siswa = Siswa::count() ?? 0;
+        $presensiMasuk = PresensiMasuk::where('created_at',Carbon::today())->count() ?? 0; 
+        $presensiPulang = PresensiPulang::where('created_at',Carbon::today())->count() ?? 0;
         $total_presensi = $presensiMasuk + $presensiPulang;
         
-        $persen_hadir = $total_presensi/count($siswa) * 100;
+        $persen_hadir = $total_presensi/$siswa * 100;
+
         return view('admin.page.dashboard.dashboard', compact('siswa','total_presensi','persen_hadir'));
     }
 
