@@ -129,7 +129,7 @@ class DataController extends Controller
                 'kode_mapel' => $sesi->mapel->kode_mapel,
                 'tanggal_ujian' => $sesi->tanggal_ujian->format('d/m/Y'),
                 'start' => $sesi->start,
-                'end' => Carbon::parse($exam->end_time)->format('H:i:s'),
+                'end' => Carbon::parse($sesi->end)->format('H:i:s'),
                 'status' => $sesi->status,
                 'status_hasil' => $hasil,
                 'soal_ujian' => $sesi->soal_ujian
