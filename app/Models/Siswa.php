@@ -19,6 +19,8 @@ class Siswa extends Model
     protected $fillable = ['user_id','id_orangtua','password','nama','nis','tanggal_lahir'];
     protected $primaryKey = 'id_siswa';
 
+    protected $casts = [ 'tanggal_lahir' => 'datetime'];
+
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

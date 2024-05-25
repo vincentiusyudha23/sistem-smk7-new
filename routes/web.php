@@ -82,7 +82,7 @@ Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(functio
 Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(function(){
     Route::get('/dashboard',[SiswaController::class, 'index'])->name('dashboard');
     Route::get('/ujian',[SiswaController::class, 'ujian'])->name('ujian');
-    Route::get('/soal-ujian/{id}/{mapel}',[SiswaController::class, 'soal_ujian'])->name('soal-ujian');
+    Route::get('/soal-ujian/{id}',[SiswaController::class, 'soal_ujian'])->name('soal-ujian');
     Route::post('/submit-jawaban', [SiswaController::class,'submit_jawaban'])->name('submit.jawaban');
     Route::get('/submit-ujian/{mapel}', [SiswaController::class,'submit_ujian'])->name('submit.ujian');
     Route::get('/presensi',[SiswaController::class,'presensi'])->name('presensi');

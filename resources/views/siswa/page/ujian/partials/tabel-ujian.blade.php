@@ -7,8 +7,8 @@
             <th>Tanggal</th>
             <th>Waktu Mulai</th>
             <th>Waktu Selesai</th>
-            {{-- <th>Aksi</th> --}}
             <th>Status</th>
+            <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
@@ -83,6 +83,23 @@
                         if (row.status == 2){
                             render = '<a href="javascript:void(0)" class="px-2 py-1 btn btn-xs btn-error btn-circle text-white w-full">Selesai</a>'                            
                         }
+                        return render;
+                    }
+                },
+                {
+                    data: null,
+                    orderable: null,
+                    searchable: null,
+                    render: function(data, type, row){
+                        var status = '';
+                        if(row.status_hasil || row.soal_ujian === null || row.status === 0){
+                            status = 'btn-disabled';
+                        }
+                        var render = `<a  href="{{ url('/siswa/soal-ujian/${row.id}') }}"  
+                                        class="btn ${status} btn-sm btn-success text-white">
+                                        Ikut Ujian
+                                    </a>`;
+                        
                         return render;
                     }
                 }

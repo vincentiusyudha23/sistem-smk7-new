@@ -8,6 +8,7 @@ use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Models\SesiUjianKelas;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 
 class MapelController extends Controller
@@ -43,7 +44,25 @@ class MapelController extends Controller
 
     public function sesi_ujian()
     {
-        $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->orderBy('created_at', 'desc')->get();
+        $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->get();
+
+        $sesi = $sesi->map(function($item){
+
+            $getIdKelas = SesiUjianKelas::where('id_sesi_ujian', $item->id)->pluck('id_kelas')->toArray();
+
+            $kelas = KelasJurusan::whereIn('id_kelas',$getIdKelas)->pluck('nama_kelas')->toArray();
+
+            return [
+                'id' => $item->id,
+                'mata_pelajaran' => $item->mapel->nama_mapel,
+                'kelas' => $kelas,
+                'tanggal' => $item->tanggal_ujian->format('Y-m-d'),
+                'start' => $item->start,
+                'end' => $item->end,
+                'status' => $item->status,
+                'soal' => $item->soal_ujian
+            ];
+        });
 
         $kelas = KelasJurusan::orderBy('created_at', 'desc')->get();
 
@@ -101,20 +120,56 @@ class MapelController extends Controller
     public function update_sesi_ujian(Request $request)
     {
         try{
-            $sesi = SesiUjian::find($request->idSesi);
-            $sesi->tanggal_ujian = $request->tanggal_ujian;
-            $sesi->start = $request->start;
-            $sesi->end = $request->end;
-            $sesi->save();
+            $sesi_ujian = SesiUjian::find($request->idSesi);
+            $sesi_ujian->update([
+                'tanggal_ujian' => $request->tanggal_ujian,
+                'start' => $request->start,
+                'end' => $request->end
+            ]);
+            
+            SesiUjianKelas::where('id_sesi_ujian', $sesi_ujian->id)->delete();
+            
+            foreach ($request->kelas as $id_kelas) {
+                SesiUjianKelas::create([
+                    'id_sesi_ujian' => $sesi_ujian->id,
+                    'id_kelas' => $id_kelas
+                ]);
+            }
+
+            $id_mapel = auth()->user()->mapel?->id_mapel;
+
+            $sesi = SesiUjian::where('id_mapel', $id_mapel)->get();
+
+            $sesi = $sesi->map(function($item){
+
+                $getIdKelas = SesiUjianKelas::where('id_sesi_ujian', $item->id)->pluck('id_kelas')->toArray();
+
+                $kelas = KelasJurusan::whereIn('id_kelas',$getIdKelas)->pluck('nama_kelas')->toArray();
+
+                return [
+                    'id' => $item->id,
+                    'mata_pelajaran' => $item->mapel->nama_mapel,
+                    'kelas' => $kelas,
+                    'tanggal' => $item->tanggal_ujian->format('Y-m-d'),
+                    'start' => $item->start,
+                    'end' => $item->end,
+                    'status' => $item->status,
+                    'soal' => $item->soal_ujian
+                ];
+            });
+
+            $render = View::make('mapel.page.sesiUjian.partial.modal-edit', compact('sesi'))->render();
 
             return response()->json([
                 'type' => 'success',
-                'msg' => 'Berhasil Update Sesi Ujian'
+                'msg' => 'Berhasil Update Sesi Ujian',
             ]);
+
         } catch(\Exception $exception){
             return response()->json([
                 'type' => 'error',
-                'msg' => 'Gagal Update Sesi Ujian'
+                'msg' => 'Gagal Update Sesi Ujian',
+                'e' => $exception->getMessage()
             ]);
         }
     }

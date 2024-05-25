@@ -58,24 +58,32 @@ class SiswaImport implements ToCollection, WithHeadingRow
             // Cari kelas
             $kelas = KelasJurusan::where('nama_kelas', (string) $row['Kelas'])->first();
             $tanggal_lahir = Date::excelToDateTimeObject((int) $row["Tanggal Lahir"]);
+
             if($kelas){
                 // Buat siswa
-                $siswa = Siswa::create([    
-                    'user_id' => $user->id,
-                    'id_orangtua' => $orang_tua->id_orangtua,
-                    'password' => $base_acct,
-                    'nama' => (string) $row['Nama Siswa'],
-                    'nis' => (string) $row['NIS'],
-                    'tanggal_lahir' => $tanggal_lahir
-                ]);
-
-                // Buat relasi kelas siswa
-                KelasSiswa::create([
-                    'id_kelas' => $kelas->id_kelas,
-                    'id_siswa' => $siswa->id_siswa
-                ]);
+                try {
+                    $siswa = Siswa::create([    
+                        'user_id' => $user->id,
+                        'id_orangtua' => $orang_tua->id_orangtua,
+                        'password' => $base_acct,
+                        'nama' => (string) $row['Nama Siswa'],
+                        'nis' => (string) $row['NIS'],
+                        'tanggal_lahir' => $tanggal_lahir
+                    ]);
+    
+                    // Buat relasi kelas siswa
+                    KelasSiswa::create([
+                        'id_kelas' => $kelas->id_kelas,
+                        'id_siswa' => $siswa->id_siswa
+                    ]);
+                } catch(\Exception $ex){
+                    User::destroy($user->id);
+                    OrangTua::destroy($orang_tua->id_orangtua);
+                }
             } else {
                 // Log jika kelas tidak ditemukan
+                User::destroy($user->id);
+                OrangTua::destroy($orang_tua->id_orangtua);
                 \Log::error('Kelas tidak ditemukan: ' . $row['Kelas']);
             }
         }

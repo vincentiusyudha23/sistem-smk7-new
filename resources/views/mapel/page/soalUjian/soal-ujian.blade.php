@@ -39,8 +39,8 @@
                     <div class="flex flex-col gap-2 my-3">
                         <div class="form-control parent-opsiSoal-${id_soal}">
                             <label class="label cursor-pointer justify-start">
-                                <input type="radio" name="soal[soal-${id_soal}][jawaban][]" for="opsi-${id_soal}" class="radio radio-primary radio-sm"/>
-                                <input type="text" placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
+                                <input type="radio" required name="soal[soal-${id_soal}][jawaban][]" for="opsi-${id_soal}" class="radio radio-primary radio-sm"/>
+                                <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
                                 <button type="button" class="btn btn-xs btn-outline btn-circle border-2 remove-opsi-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
                                 </button>
@@ -58,8 +58,8 @@
             
             $('.parent-opsiSoal-'+id_soal).append(`
                 <label class="label cursor-pointer justify-start">
-                    <input type="radio" name="soal[soal-${id_soal}][jawaban][]" class="radio radio-primary radio-sm" for="opsi-${id_soal}"/>
-                    <input type="text" placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
+                    <input type="radio" required name="soal[soal-${id_soal}][jawaban][]" class="radio radio-primary radio-sm" for="opsi-${id_soal}"/>
+                    <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
                     <button type="button" class="btn btn-xs btn-outline btn-circle border-2 remove-opsi-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
                     </button>

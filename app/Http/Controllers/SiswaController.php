@@ -66,11 +66,11 @@ class SiswaController extends Controller
         return view('siswa.page.ujian.ujian');
     }
     
-    public function soal_ujian($id, $mapel)
+    public function soal_ujian($id)
     {
-        $ujian = SesiUjian::find($id);
+        $ujian = SesiUjian::where('id', $id)->with('mapel')->first();
 
-        return view('siswa.page.ujian.soal-ujian', compact('ujian','mapel'));
+        return view('siswa.page.ujian.soal-ujian', compact('ujian'));
     }
 
     public function submit_jawaban(Request $request): JsonResponse
