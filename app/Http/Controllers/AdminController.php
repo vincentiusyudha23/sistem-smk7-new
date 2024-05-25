@@ -41,10 +41,8 @@ class AdminController extends Controller
         $presensiPulang = PresensiPulang::where('created_at',Carbon::today())->count() ?? 0;
         $total_presensi = $presensiMasuk + $presensiPulang;
         
-        $persen_hadir = $total_presensi/$siswa;
-
-        if($persen_hadir > 0){
-            $persen_hadir = $persen_hadir * 100;
+        if($total_presensi > 0){
+            $persen_hadir = $total_presensi/$siswa * 100;
         } else {
             $persen_hadir = 0;
         }
