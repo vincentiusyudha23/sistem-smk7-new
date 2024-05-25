@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Mapel;
 use App\Models\Siswa;
@@ -14,6 +15,8 @@ use App\Imports\KelasImport;
 use App\Imports\SiswaImport;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Models\PresensiMasuk;
+use App\Models\PresensiPulang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
@@ -34,8 +37,12 @@ class AdminController extends Controller
     public function index()
     {   
         $siswa = Siswa::pluck('id_siswa');
-
-        return view('admin.page.dashboard.dashboard', compact('siswa'));
+        $presensiMasuk = PresensiMasuk::where('created_at',Carbon::today())->count(); 
+        $presensiPulang = PresensiPulang::where('created_at',Carbon::today())->count();
+        $total_presensi = $presensiMasuk + $presensiPulang;
+        
+        $persen_hadir = $total_presensi/count($siswa) * 100;
+        return view('admin.page.dashboard.dashboard', compact('siswa','total_presensi','persen_hadir'));
     }
 
     public function register()
