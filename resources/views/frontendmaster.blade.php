@@ -10,6 +10,7 @@
         <link rel="icon" type="image/png" href="{{ asset('asset/logo/logo_smk7.png') }}">
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
         @stack('style')
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -43,6 +44,7 @@
         </div>
         <script>
             (function($){
+                
                 $.fn.show = function(){
                     this.removeClass('hidden');
                 };

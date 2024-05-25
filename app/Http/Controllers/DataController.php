@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mapel;
 use App\Models\Siswa;
 use App\Models\SesiUjian;
+use App\Models\HasilUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Exports\KelasTemplate;
@@ -48,7 +49,7 @@ class DataController extends Controller
                 'kelas' => $item->getKelas()?->nama_kelas ?? '',
                 'all_kelas' => $all_kelas,
                 'id_kelas' => $item->kelas?->id_kelas ?? '',
-                'tanggal_lahir' => $item->tanggal_lahir,
+                'tanggal_lahir' => $item->tanggal_lahir->format('d/m/Y'),
                 'orang_tua' => $item->orangTua->nama,
                 'nomor_telp' => $item->orangTua->nomor_telepon
             ];
@@ -90,7 +91,7 @@ class DataController extends Controller
                 'id_sesi' => $item->id,
                 'mata_pelajaran' => $item->mapel->nama_mapel,
                 'kelas' => $kelas,
-                'tanggal' => $item->tanggal_ujian,
+                'tanggal' => $item->tanggal_ujian->format('d/m/Y'),
                 'start' => $item->start,
                 'end' => $item->end,
                 'status' => $item->status,
@@ -119,13 +120,18 @@ class DataController extends Controller
         $ujian = $ujian->map(function($item){
             $sesi = SesiUjian::where('id', $item->id_sesi_ujian)->first();
 
+            $hasil = HasilUjian::where('id_siswa', auth()->user()->siswa->id_siswa)
+                        ->where('id_sesi_ujian',$sesi->id)->first() ? true : false;
             return [
+                'id' => $sesi->id,
                 'mata_pelajaran' => $sesi->mapel->nama_mapel,
                 'kode_mapel' => $sesi->mapel->kode_mapel,
                 'tanggal_ujian' => $sesi->tanggal_ujian->format('d/m/Y'),
                 'start' => $sesi->start,
                 'end' => $sesi->end,
-                'status' => $sesi->status
+                'status' => $sesi->status,
+                'status_hasil' => $hasil,
+                'soal_ujian' => $sesi->soal_ujian
             ];
         });
         return response()->json(['data' => $ujian]);

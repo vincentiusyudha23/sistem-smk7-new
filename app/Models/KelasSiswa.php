@@ -17,4 +17,9 @@ class KelasSiswa extends Model
     {
         return $this->hasOne(KelasJurusan::class);
     }
+
+    public function kelas()
+    {
+        return $this->hasOne(KelasJurusan::class, 'id_kelas', 'id_kelas');
+    }
 }

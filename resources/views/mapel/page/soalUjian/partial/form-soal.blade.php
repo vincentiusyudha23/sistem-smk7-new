@@ -27,8 +27,8 @@
                                                 @php
                                                     $jawaban = $soal->jawaban[0] ?? '';
                                                 @endphp
-                                                <input type="radio" {{ $opsi == $jawaban ? 'checked' : '' }} value="{{ $opsi }}"  name="soal[{{ $key }}][jawaban][]" for="opsi-{{ $key }}" class="radio radio-primary radio-sm"/>
-                                                <input type="text" value="{{ $opsi }}" name="soal[{{ $key }}][opsi_soal][]" id="opsi-{{ $key }}" class="input input-bordered input-sm mx-3 w-[50%]">
+                                                <input type="radio" required {{ $opsi == $jawaban ? 'checked' : '' }} value="{{ $opsi }}"  name="soal[{{ $key }}][jawaban][]" for="opsi-{{ $key }}" class="radio radio-primary radio-sm"/>
+                                                <input type="text" required value="{{ $opsi }}" name="soal[{{ $key }}][opsi_soal][]" id="opsi-{{ $key }}" class="input input-bordered input-sm mx-3 w-[50%]">
                                                 <button type="button" class="btn btn-xs btn-outline btn-circle border-2 remove-opsi-btn">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
                                                 </button>

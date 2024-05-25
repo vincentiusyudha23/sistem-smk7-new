@@ -1,7 +1,7 @@
 @extends('frontendmaster')
 
 @section('title')
-    <title>Ujian Matematika</title>
+    <title>Ujian {{ $ujian->mapel->nama_mapel }}</title>
 @endsection
 
 @section('content')
@@ -10,22 +10,22 @@
     @endphp
     <x-layout-siswa>
         <div class="w-full h-full pt-5">
-            <h1 class="text-2xl font-bold mb-3">Ujian {{ $mapel }}</h1>
+            <h1 class="text-2xl font-bold mb-3">Ujian {{ $ujian->mapel->nama_mapel }}</h1>
             <div class="w-full bg-gray-300 rounded-lg p-5 soal-ujian">
-                <form id="form-ujian-siswa" data-url="{{ route('siswa.submit.ujian', ["mapel" => $mapel]) }}">
+                <form id="form-ujian-siswa" data-url="{{ route('siswa.submit.ujian', ["mapel" => $ujian->mapel->nama_mapel]) }}">
                     @csrf
-                    <input type="hidden" id="mapel" value="{{ $mapel }}">
+                    <input type="hidden" id="mapel" value="{{ $ujian->mapel->nama_mapel }}">
                     <input type="hidden" name="id_sesi" value="{{ $ujian->id }}">
                     <div class="w-full">
                         <ul class="list-soal mt-3">
                         @foreach ($soalUjian as $key => $soal)
                             <li class=" my-2 soal-1">
                                 <label class="form-control">
-                                    <textarea class="textarea textarea-bordered textarea-xs w-full text-sm" disabled>{{ $soal['soal'] }}</textarea>
+                                    <textarea class="textarea textarea-bordered textarea-xs w-full text-sm" readonly>{{ $soal['soal'] }}</textarea>
                                 </label>
                                 <div class="flex flex-col gap-2 my-3">
                                     <div class="form-control parent-opsiSoal-1 flex flex-col gap-2 bg-white pt-2 rounded-lg p-2">
-                                        @foreach ($soal['opsi-soal'] ?? [] as $opsi)
+                                        @foreach ($soal['opsi_soal'] ?? [] as $opsi)
                                         <label class="cursor-pointer js-opsi-soal label justify-start hover:bg-slate-200 active:bg-slate-200 hover:rounded-lg">
                                             <input type="radio" name="{{ $key }}" value="{{ $opsi == $soal['jawaban'][0] ? encrypt(1) : encrypt(0) }}" class="radio radio-primary radio-sm"/>
                                             <span class="mx-2">{{ $opsi }}</span>

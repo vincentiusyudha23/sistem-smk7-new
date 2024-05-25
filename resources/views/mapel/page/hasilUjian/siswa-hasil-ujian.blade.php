@@ -25,7 +25,7 @@
                 </ul>
                 <div class="w-32 h-full flex flex-col justify-center items-center bg-slate-50 mr-5 rounded-sm">
                     <h1 class="text-2xl font-bold">{{ count($hasil_ujians) }}</h1>
-                    <h1 class="text-lg">Jawaban</h1>
+                    <h1 class="text-lg">Siswa</h1>
                 </div>
             </div>
             <table class="display" style="width: 100%" id="js-table">
@@ -36,7 +36,6 @@
                         <th>Nama Siswa</th>
                         <th>NIS</th>
                         <th>Kelas</th>
-                        <th>Jurusan</th>
                         <th>Nilai</th>
                         <th>Tanggal</th>
                     </tr>
@@ -47,10 +46,9 @@
                             <th>{{ $loop->index + 1 }}</th>
                             <td>{{ $ujian->siswa->nama }}</td>
                             <td>{{ $ujian->siswa->nis }}</td>
-                            <td>{{ $ujian->siswa->kelas->kelas }}</td>
-                            <td>{{ $ujian->siswa->jurusan->jurusan }}</td>
+                            <td>{{ $ujian->siswa?->kelas?->kelas?->nama_kelas }}</td>
                             <td>{{ $ujian->nilai }}</td>
-                            <td>{{ $ujian->sesi_ujian->tanggal_ujian }}</td>
+                            <td>{{ $ujian->sesi_ujian->tanggal_ujian->format('d/m/Y') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -16,6 +16,7 @@
             @include('mapel.page.sesiUjian.partial.form_sesi_ujian')
             <h1 class="text-2xl font-bold mt-10">List Sesi Ujian</h1>
             @include('mapel.page.sesiUjian.partial.tabel_sesi_ujian')
+            @include('mapel.page.sesiUjian.partial.modal-edit')
         </div>
     </div>
 @endsection
@@ -25,6 +26,13 @@
         $(document).ready(function(){
             $('.js-example-basic-multiple').select2({
                 placeholder: 'Pilih Kelas'
+            });
+            $(document).on('click', '.btn-edit-click', function(){
+                var id_sesi = $(this).data('id');
+                $('.js-example-basic-multiple2').select2({
+                    placeholder: 'Pilih Kelas',
+                    dropdownParent: $(`#my_modal_${id_sesi}`)
+                });
             });
             $(document).on('click','.btn-delete-sesi', function(){
                 Swal.fire({
@@ -143,7 +151,11 @@
                     success: function(response){
                         if(response.type === 'success'){
                             toastr.success(response.msg);
-                            location.reload();
+                            $('#js-table-sesi').DataTable().ajax.reload();
+                            btn_save.removeClass('btn-disabled');
+                            btn_save.text('Simpan');
+                            $('.btn-close-modal').trigger('click');
+                            
                         }
                         if(response.type === 'error'){
                             toastr.error(response.msg);
@@ -212,7 +224,7 @@
                                     </div>`;
                             }
                                 render += `
-                                    <button class="btn btn-sm btn-success btn-squer text-white"  onclick="my_modal_${row.id_sesi}.showModal()">
+                                    <button class="btn btn-sm btn-success btn-squer btn-edit-click text-white" data-id="${row.id_sesi}"  onclick="my_modal_${row.id_sesi}.showModal()">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
                                     </button>
                                     <div class="tooltip" data-tip="Hapus Sesi Ujian">
