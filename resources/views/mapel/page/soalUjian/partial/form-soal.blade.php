@@ -18,7 +18,7 @@
                                         <span class="label-text text-lg font-semibold">Soal {{ $loop->index + 1 }}</span>
                                         <button type="button" class="btn btn-sm btn-error text-white btn-remove-soal" data-soal="{{ $loop->index + 1 }}">Hapus</button>
                                     </div>
-                                    <textarea name="soal[{{ $key }}][soal]" class="textarea textarea-bordered textarea-sm w-full max-h-[50px] bg-white">{{ $soal->soal }}</textarea>
+                                    <textarea name="soal[{{ $key }}][soal]" required class="textarea textarea-bordered textarea-sm w-full max-h-[50px] bg-white">{{ $soal->soal }}</textarea>
                                 </label>
                                 <div class="flex flex-col gap-2 my-3">
                                     <div class="form-control parent-opsiSoal-{{ $loop->index + 1 }}">

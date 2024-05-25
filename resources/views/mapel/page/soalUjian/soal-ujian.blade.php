@@ -34,7 +34,7 @@
                             <span class="label-text text-lg font-semibold">Soal ${id_soal}.</span>
                             <button type="button" class="btn btn-sm btn-error text-white btn-remove-soal" data-soal="${id_soal}">Hapus</button>
                         </div>
-                        <textarea placeholder="input soal" name="soal[soal-${id_soal}][soal]" class="textarea textarea-bordered textarea-sm w-full max-h-[50px] bg-white"></textarea>
+                        <textarea placeholder="input soal" required name="soal[soal-${id_soal}][soal]" class="textarea textarea-bordered textarea-sm w-full max-h-[50px] bg-white"></textarea>
                     </label>
                     <div class="flex flex-col gap-2 my-3">
                         <div class="form-control parent-opsiSoal-${id_soal}">
