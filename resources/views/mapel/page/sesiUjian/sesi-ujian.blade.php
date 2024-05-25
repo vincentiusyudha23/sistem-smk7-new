@@ -192,7 +192,7 @@
                         render: function(data, type, row){
                             var render = '';
                             if(row.status == 0){
-                                render = s`<a href="javascript:void(0)" class="btn-update-status btn btn-xs btn-circle btn-warning text-white w-full" data-value="0" data-id="${row.id_sesi}">Belum Mulai</a>`;
+                                render = `<a href="javascript:void(0)" class="btn-update-status btn btn-xs btn-circle btn-warning text-white w-full" data-value="0" data-id="${row.id_sesi}">Belum Mulai</a>`;
                             }
                             if(row.status == 1){
                                 render = `<a href="javascript:void(0)" class="btn-update-status btn btn-xs btn-success btn-circle text-white w-full" data-value="1" data-id="${row.id_sesi}">Sedang Mulai</a>`;
