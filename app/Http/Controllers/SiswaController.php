@@ -41,12 +41,12 @@ class SiswaController extends Controller
 
     public function presensi()
     {
-        $token_masuk = TokenQrCode::where('nama','masuk')->where('status',1)->first();
-        $token_pulang = TokenQrCode::where('nama','pulang')->where('status',1)->first();
+        $token_masuk = TokenQrCode::where('nama','masuk')->first();
+        $token_pulang = TokenQrCode::where('nama','pulang')->first();
 
         $token = [
-            'masuk' => $token_masuk?->token ?? '',
-            'pulang' => $token_pulang?->token ?? ''
+            'masuk' => $token_masuk?->token,
+            'pulang' => $token_pulang?->token
         ];
         return view('siswa.page.presensi.presensi', compact('token'));
     }
@@ -134,11 +134,28 @@ class SiswaController extends Controller
                 ->whereDate('created_at', Carbon::today())->first();
         $presensi_pulang = PresensiPulang::where('id_siswa', $request->id_siswa)
                 ->whereDate('created_at', Carbon::today())->first();
-        if($request->distance <= 5){
+
+        $qr_masuk = TokenQrCode::where('nama','masuk')->first();
+        $qr_pulang = TokenQrCode::where('nama','pulang')->first();
+
+        if($qr_masuk->status != 1 && $request->nama == 1){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Saat ini absen masuk Siswa Belum Aktif'
+            ]); 
+        }
+        if($qr_pulang->status != 1 && $request->nama == 2){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Saat ini absen pulang Siswa Belum Aktif'
+            ]); 
+        }
+
+        if($request->distance <= env('DISTANCE_SET') || env('DISTANCE_SCANNER') === false){
             try{
                 $siswa = Siswa::find($request->id_siswa);
                 $nomor_telp = $siswa->orangTua->nomor_telepon;
-
+                
                 if($request->nama == 1){
                     if(empty($presensi_masuk)){
                         PresensiMasuk::create([
@@ -168,31 +185,36 @@ class SiswaController extends Controller
                 }
     
                 if($request->nama == 2){
-                    if(empty($presensi_pulang)){
-                        PresensiPulang::create([
-                            'id_siswa' => $request->id_siswa,
-                            'status' => 'pulang'
-                        ]);
+                    if(empty($presensi_pulang) ){
 
-                        if ($nomor_telp) {
-                            $sendMessage = new SendNotification();
-                            $sendMessage->sendMessagePulang($nomor_telp, $siswa->nama);
-                        }
-
-                        return response()->json([
-                            'type' => 'success',
-                            'msg' => 'Berhasil Absen Pulang!'
-                        ]);
+                        if(!empty($presensi_masuk)){
+                            PresensiPulang::create([
+                                'id_siswa' => $request->id_siswa,
+                                'status' => 'pulang'
+                            ]);
     
-                        // return redirect()->back()->with('success','Berhasil Absen Pulang!');
+                            if ($nomor_telp) {
+                                $sendMessage = new SendNotification();
+                                $sendMessage->sendMessagePulang($nomor_telp, $siswa->nama);
+                            }
+    
+                            return response()->json([
+                                'type' => 'success',
+                                'msg' => 'Berhasil Absen Pulang!'
+                            ]);
+                        }
+    
+                         return response()->json([
+                            'type' => 'error',
+                            'msg' => 'Anda Belum Absen Masuk!'
+                        ]); 
                     }
 
                     return response()->json([
                             'type' => 'error',
-                            'msg' => 'Anda Sudah Absen Pulang Hari Ini!'
+                            'msg' => 'Anda Sudah Absen Pulang Hari Ini'
                         ]); 
     
-                    // return redirect()->back()->with('error','Anda Sudah Absen Hari Ini!');
                 }
             }catch(\Exception $e){
                 return response()->json([

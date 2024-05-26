@@ -8,8 +8,8 @@
                     function(position) {
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
-                        const validLat = '-5.399239';
-                        const validLong = '105.309080';
+                        const validLat = "{{ env('VALID_LAT') }}";
+                        const validLong = "{{ env('VALID_LNG') }}";
                         var distance = calculateDistance(latitude, longitude, validLat, validLong);
 
                         el.addClass('hidden');
@@ -35,9 +35,12 @@
         
                     const token_masuk = "{{ $token['masuk'] }}";
                     const token_pulang = "{{ $token['pulang'] }}";
-                    
-                    const html5QrCode = new Html5Qrcode("reader");
 
+                    const html5QrCode = new Html5Qrcode("reader", { 
+                        formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
+                        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+                    });
+                    $('.distance').text(distance);
                     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                         var id_siswa = "{{ auth()->user()->siswa->id_siswa }}";
                         if(token_masuk == decodedText){
@@ -52,6 +55,7 @@
                         let isScanner = false;
                         if(isScanner !== true){
                             isScanner = true;
+                            html5QrCode.stop();
                             $.ajax({
                                 type: 'post',
                                 url: "{{ route('siswa.submit.presensi') }}",
@@ -73,6 +77,8 @@
                                             icon: 'success',
                                             timer: 5000,
                                             confirmButtonText: 'Tutup'
+                                        }).then(()=>{
+                                            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
                                         });
                                     }
                                     if(response.type === 'error'){
@@ -82,6 +88,8 @@
                                             icon: 'error',
                                             timer: 5000,
                                             confirmButtonText: 'Tutup'
+                                        }).then(()=>{
+                                            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
                                         });
                                     }
                                     isScanner = false;
@@ -89,10 +97,10 @@
                             });
                         }
                     }
-                    const config = { fps: 1, qrbox: { 
-                        width: isMobile() ? 250 : 350, 
-                        height: isMobile() ? 250 : 250
-                    } };
+                    const config = { 
+                        fps: 10, 
+                        qrbox: { width: isMobile() ? 250 : 350, height: isMobile() ? 250 : 250} ,
+                    };
         
                     function isMobile() {
                         const userAgent = window.navigator.userAgent.toLowerCase();
@@ -100,7 +108,7 @@
         
                         return mobileKeywords.some(keyword => userAgent.includes(keyword));
                     }
-                    
+
                     html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
                 }
             }).catch(err => {
@@ -109,7 +117,7 @@
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius bumi dalam kilometer
+            const R = 6371000; // Radius bumi dalam kilometer
             const dLat = (lat2 - lat1) * (Math.PI / 180);
             const dLon = (lon2 - lon1) * (Math.PI / 180);
             const a =
@@ -120,7 +128,7 @@
                     Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const distance = R * c;
-            return distance;
+            return Math.round(distance);
         }
     });
 

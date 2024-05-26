@@ -78,17 +78,6 @@ class AdminController extends Controller
             $presensiMasuk = PresensiMasuk::whereDate('created_at', $tanggal)->count();
             $presensiPulang = PresensiPulang::whereDate('created_at', $tanggal)->latest();
             
-            // $union = $presensiMasuk->unionAll($presensiPulang)->get();
-            // $union = $union->map(function($item){
-            //     return [
-            //         'tanggal' => $item->created_at->format('d/m/Y'),
-            //         'nama_siswa' => $item->siswa?->nama ?? '',
-            //         'nis' => $item->siswa?->nis ?? '',
-            //         'kelas' =>  getKelasSiswa($item->siswa?->kelas?->id_kelas),
-            //         'status' => $item->status
-            //     ];
-            // });
-            // Menyimpan data ke dalam array dengan kunci berupa tanggal
             $dataPresensiPerHari[$tanggal->isoFormat('dddd, DD/MM/YYYY')] = $presensiMasuk;
         }
 
@@ -211,63 +200,42 @@ class AdminController extends Controller
 
     public function generate_qr_code()
     {
-        $masuk =  TokenQrCode::where('nama','masuk')->select('token','status')->first() ?? '';
-        $pulang =  TokenQrCode::where('nama','pulang')->select('token','status')->first() ?? '';
-        
-        $token_masuk = $masuk->token ?? '';
-        $token_pulang = $pulang->token ?? '';
+        $masuk =  TokenQrCode::where('nama','masuk')->first();
+        $pulang =  TokenQrCode::where('nama','pulang')->first();
 
-        $status_masuk = $masuk->status ?? '';
-        $status_pulang = $pulang->status ?? '';
+        $qr_code = [];
 
-        $qr_code = [
-            'masuk' => $this->generate_qr_code_render($token_masuk),
-            'pulang' => $this->generate_qr_code_render($token_pulang),
-            'status_masuk' => $status_masuk,
-            'status_pulang' => $status_pulang
-        ];
-        return view('admin.page.generate-qr.generate_qr', compact('qr_code'));
-    }
+        if(!empty($masuk) && !empty($pulang)){
+            $qr_code = [
+                'masuk' => $masuk->token,
+                'pulang' => $pulang->token,
+                'status_masuk' => $masuk->status,
+                'status_pulang' => $pulang->status
+            ];
+        }
 
-    public function render_qr_code(Request $request)
-    {
-        $request->validate([
-            'nama' => 'required'
-        ]);
-        
-        $token = TokenQrCode::where('nama',$request->nama)->first();
-
-        if(empty($token)){
-            $token_id = Str::random(30);
-            $create_token = TokenQrCode::create([
-                'nama' => $request->nama,
-                'token' => $token_id,
+        if(empty($masuk) && empty($pulang)){
+            $create_token_masuk = TokenQrCode::create([
+                'nama' => 'masuk',
+                'token' => Str::random(30),
                 'status' => 0
             ]);
-            $qr_code = $this->generate_qr_code_render($create_token->token);
-            $nama_qr = $request->nama;
-            $view = View::make('admin.page.generate-qr.partials.render_qr_code', compact('qr_code','nama_qr'))->render();
 
-            return response()->json([
-                'type' => 'success',
-                'msg' => 'Berhasil Membuat Qr Code',
-                'view' => $view 
+            $create_token_pulang = TokenQrCode::create([
+                'nama' => 'pulang',
+                'token' => Str::random(30),
+                'status' => 0
             ]);
-        }
 
-        return response()->json([
-            'type' => 'error',
-            'msg' => 'Qr Code Sudah Ada!'
-        ]);
-    }
-
-    private function generate_qr_code_render($token)
-    {
-        if($token !== ''){
-            return QrCode::format('png')->size(250)->generate($token);
-        } else {
-            return '';
+            $qr_code = [
+                'masuk' => $create_token_masuk->token,
+                'pulang' => $create_token_pulang->token,
+                'status_masuk' => $create_token_masuk->status,
+                'status_pulang' => $create_token_pulang->status
+            ];
         }
+        
+        return view('admin.page.generate-qr.generate_qr', compact('qr_code'));
     }
 
     public function update_qr_code(Request $request)
@@ -291,6 +259,25 @@ class AdminController extends Controller
                 'msg' => 'Qr Code Berhasil dimatikan'
             ]);
         }
+    }
+
+    public function download_qrcode($token_id)
+    {
+        if($token_id == 1){
+            $qrCode = TokenQrCode::where('nama', 'masuk')->first();
+
+            return response(generateQrcode($qrCode->token))
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', 'attachment; filename="qr-code-masuk.png"');
+        };
+
+        if($token_id == 2){
+            $qrCode = TokenQrCode::where('nama', 'pulang')->first();
+
+            return response(generateQrcode($qrCode->token))
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', 'attachment; filename="qr-code-pulang.png"');
+        };
     }
 
     public function store_siswa(Request $request)

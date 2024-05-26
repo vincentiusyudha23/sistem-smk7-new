@@ -42,3 +42,12 @@ function getKelasSiswa($kelas)
     $nama_kelas = $kelas?->nama_kelas ?? '';
     return $nama_kelas;
 }
+
+function generateQrcode($token)
+{
+    return QrCode::format('png')
+        ->backgroundColor(255, 255, 255)
+        ->size(250)
+        ->margin(1)
+        ->generate($token);
+}
