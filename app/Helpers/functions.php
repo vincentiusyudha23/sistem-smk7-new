@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\KelasJurusan;
 
 function getCurrentTimeOfDay($user = '')
 {
@@ -33,4 +34,11 @@ function getCapitalText($kelas)
             return '';
             break;
     }
+}
+
+function getKelasSiswa($kelas)
+{
+    $kelas = KelasJurusan::where('id_kelas',$kelas)->first();
+    $nama_kelas = $kelas?->nama_kelas ?? '';
+    return $nama_kelas;
 }

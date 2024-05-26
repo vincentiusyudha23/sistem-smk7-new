@@ -9,8 +9,10 @@ use App\Models\SesiUjian;
 use App\Models\HasilUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Models\PresensiMasuk;
 use App\Exports\KelasTemplate;
 use App\Exports\SiswaTemplate;
+use App\Models\PresensiPulang;
 use App\Models\SesiUjianKelas;
 use Maatwebsite\Excel\Facades\Excel;
 

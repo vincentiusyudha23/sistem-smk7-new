@@ -37,17 +37,16 @@ class AdminController extends Controller
     public function index()
     {   
         $siswa = Siswa::count() ?? 0;
-        $presensiMasuk = PresensiMasuk::where('created_at',Carbon::today())->count() ?? 0; 
-        $presensiPulang = PresensiPulang::where('created_at',Carbon::today())->count() ?? 0;
-        $total_presensi = $presensiMasuk + $presensiPulang;
+        $presensiMasuk = PresensiMasuk::whereDate('created_at',Carbon::today())->count() ?? 0; 
+        $presensiPulang = PresensiPulang::whereDate('created_at',Carbon::today())->count() ?? 0;
         
-        if($total_presensi > 0){
-            $persen_hadir = $total_presensi/$siswa * 100;
+        if($presensiMasuk > 0){
+            $persen_hadir = $presensiMasuk/$siswa * 100;
         } else {
             $persen_hadir = 0;
         }
 
-        return view('admin.page.dashboard.dashboard', compact('siswa','total_presensi','persen_hadir'));
+        return view('admin.page.dashboard.dashboard', compact('siswa','presensiMasuk','presensiPulang','persen_hadir'));
     }
 
     public function register()
@@ -69,7 +68,53 @@ class AdminController extends Controller
 
     public function presensi()
     {
-        return view('admin.page.presensi.kelola_presensi');
+         $dataPresensiPerHari = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            // Mengambil tanggal yang sesuai
+            $tanggal = Carbon::today()->subDays($i);
+            
+            // Mengambil data presensi untuk tanggal tersebut
+            $presensiMasuk = PresensiMasuk::whereDate('created_at', $tanggal)->count();
+            $presensiPulang = PresensiPulang::whereDate('created_at', $tanggal)->latest();
+            
+            // $union = $presensiMasuk->unionAll($presensiPulang)->get();
+            // $union = $union->map(function($item){
+            //     return [
+            //         'tanggal' => $item->created_at->format('d/m/Y'),
+            //         'nama_siswa' => $item->siswa?->nama ?? '',
+            //         'nis' => $item->siswa?->nis ?? '',
+            //         'kelas' =>  getKelasSiswa($item->siswa?->kelas?->id_kelas),
+            //         'status' => $item->status
+            //     ];
+            // });
+            // Menyimpan data ke dalam array dengan kunci berupa tanggal
+            $dataPresensiPerHari[$tanggal->isoFormat('dddd, DD/MM/YYYY')] = $presensiMasuk;
+        }
+
+        return view('admin.page.presensi.kelola_presensi', compact('dataPresensiPerHari'));
+    }
+
+    public function detail_presensi($id)
+    {
+        $tanggal = Carbon::today()->subDays($id);
+
+        $presensiMasuk = PresensiMasuk::whereDate('created_at', $tanggal)->latest();
+        $presensiPulang = PresensiPulang::whereDate('created_at', $tanggal)->latest();
+
+        $presensi = $presensiMasuk->unionAll($presensiPulang)->orderBy('created_at', 'desc')->get();
+
+        $presensi = $presensi->map(function($item){
+                return [
+                    'tanggal' => $item->created_at->format('d/m/Y'),
+                    'nama_siswa' => $item->siswa?->nama ?? '',
+                    'nis' => $item->siswa?->nis ?? '',
+                    'kelas' =>  getKelasSiswa($item->siswa?->kelas?->id_kelas),
+                    'status' => $item->status
+                ];
+            });
+        
+        return view('admin.page.presensi.partial.tabel_presensi', compact('presensi'));
     }
 
     public function kelas_jurusan()
