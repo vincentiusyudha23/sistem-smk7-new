@@ -110,7 +110,16 @@
                                         title: 'Success',
                                         text: response.msg,
                                         icon: 'success',
-                                        timer: 1500
+                                    }).then( () => {
+                                        $('.count-kelas').text(response.count);
+                                        $('#js-table-kelas').DataTable().ajax.reload();
+                                    });
+                                }
+                                if(response.type === "warning"){
+                                   Swal.fire({
+                                        title: 'Warning!',
+                                        html: response.msg,
+                                        icon: 'warning',
                                     }).then( () => {
                                         $('.count-kelas').text(response.count);
                                         $('#js-table-kelas').DataTable().ajax.reload();
@@ -119,7 +128,7 @@
                                 if(response.type === "error"){
                                     Swal.fire({
                                         title: 'Gagal',
-                                        text: response.msg,
+                                        html: response.msg,
                                         icon: 'error',
                                     });
                                 }

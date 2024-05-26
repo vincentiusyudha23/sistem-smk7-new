@@ -143,11 +143,28 @@ class AdminController extends Controller
             'nama_kelas' => 'required'
         ]);
 
+        $slug = Str::slug($request->nama_kelas);
+
+        if(KelasJurusan::where('nama_kelas', $request->nama_kelas)->exists()){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Kelas sudah terdaftar.'
+            ]);
+        }
+
+        if(KelasJurusan::where('slug', $slug)->exists()){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Kelas sudah terdaftar.'
+            ]);
+        }
+
         try{
             KelasJurusan::create([
                 'jurusan' => $request->jurusan,
                 'kelas' => $request->kelas,
-                'nama_kelas' => $request->nama_kelas
+                'nama_kelas' => $request->nama_kelas,
+                'slug' => Str::slug($request->nama_kelas)
             ]);
             $count = KelasJurusan::count();
             return response()->json([
@@ -173,6 +190,42 @@ class AdminController extends Controller
             $file = $request->file('template_kelas');
 
             Excel::import(new KelasImport, $file);
+
+            $count_kelas = KelasJurusan::count();
+
+            $errors = Session::get('kelas_import_error');
+            $success = Session::get('kelas_import_success');
+
+            if($errors && !$success){
+                $msg = 'Gagal Import Kelas <br>';
+                foreach($errors as $error){
+                    $msg .= "- ".$error."<br>";
+                }
+                return response()->json([
+                    'type' => 'error',
+                    'msg' => $msg
+                ]);
+            }
+            if($errors && $success){
+                $msg = 'Berhasil Import Kelas <br>';
+                $msg = 'Catatan untuk data berikut : <br>';
+                
+                foreach($errors as $error){
+                    $msg .= "- ".$error."<br>";
+                }
+                return response()->json([
+                    'type' => 'warning',
+                    'msg' => $msg,
+                    'count' => $count_kelas
+                ]);
+            }
+            if(!$errors && $success){
+                return response()->json([
+                    'type' => 'success',
+                    'msg' => "Berhasil Import Data Kelas",
+                    'count' => $count_kelas
+                ]);
+            }
         }
 
         return response()->json([

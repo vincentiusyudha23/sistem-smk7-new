@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('jurusan');
             $table->enum('kelas', [10,11,12]);
             $table->string('nama_kelas');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

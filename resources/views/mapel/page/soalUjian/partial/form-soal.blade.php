@@ -22,7 +22,7 @@
                                 </label>
                                 <div class="flex flex-col gap-2 my-3">
                                     <div class="form-control parent-opsiSoal-{{ $loop->index + 1 }}">
-                                        @foreach ($soal->opsi_soal as $opsi)
+                                        @foreach ($soal->opsi_soal ?? [] as $opsi)
                                             <label class="label cursor-pointer justify-start">
                                                 @php
                                                     $jawaban = $soal->jawaban[0] ?? '';
