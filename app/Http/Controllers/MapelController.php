@@ -85,7 +85,7 @@ class MapelController extends Controller
         ]);
         // dd($request->all());
         try{
-            $sesi = SesiUjian::create([
+            $sesi_ujian = SesiUjian::create([
                     'id_mapel' => auth()->user()->mapel->id_mapel,
                     'tanggal_ujian' => $request->tanggal_ujian,
                     'start' => $request->start,
@@ -96,7 +96,7 @@ class MapelController extends Controller
 
             foreach ($request->kelas as $key => $value) {
                 $data = [
-                    'id_sesi_ujian' => $sesi->id,
+                    'id_sesi_ujian' => $sesi_ujian->id,
                     'id_kelas' => $value
                 ];
 
@@ -107,12 +107,14 @@ class MapelController extends Controller
 
             return response()->json([
                 'type' => 'success',
-                'msg' => 'Berhasil Membuat Sesi Ujian'
+                'msg' => 'Berhasil Membuat Sesi Ujian',
+                'render' => $this->render_modal_edit()
             ]);
+
         } catch(\Exception $exception){
             return response()->json([
                 'type' => 'error',
-                'msg' => 'Gagal Membuat Sesi Ujian'
+                'msg' => $exception->getMessage()
             ]);
         }
     }
@@ -136,7 +138,24 @@ class MapelController extends Controller
                 ]);
             }
 
-            $id_mapel = auth()->user()->mapel?->id_mapel;
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Berhasil Update Sesi Ujian',
+                'render' => $this->render_modal_edit()
+            ]);
+
+        } catch(\Exception $exception){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Gagal Update Sesi Ujian',
+                'e' => $exception->getMessage()
+            ]);
+        }
+    }
+
+    private function render_modal_edit()
+    {
+         $id_mapel = auth()->user()->mapel?->id_mapel;
 
             $sesi = SesiUjian::where('id_mapel', $id_mapel)->get();
 
@@ -158,20 +177,7 @@ class MapelController extends Controller
                 ];
             });
 
-            $render = View::make('mapel.page.sesiUjian.partial.modal-edit', compact('sesi'))->render();
-
-            return response()->json([
-                'type' => 'success',
-                'msg' => 'Berhasil Update Sesi Ujian',
-            ]);
-
-        } catch(\Exception $exception){
-            return response()->json([
-                'type' => 'error',
-                'msg' => 'Gagal Update Sesi Ujian',
-                'e' => $exception->getMessage()
-            ]);
-        }
+            return View::make('mapel.page.sesiUjian.partial.modal-edit', compact('sesi'))->render();
     }
 
     public function store_soal_ujian(Request $request)

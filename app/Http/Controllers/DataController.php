@@ -82,7 +82,7 @@ class DataController extends Controller
 
     public function getDataSesi($id_mapel)
     {
-        $sesi = SesiUjian::where('id_mapel', $id_mapel)->get();
+        $sesi = SesiUjian::where('id_mapel', $id_mapel)->orderBy('created_at', 'desc')->get();
 
         $sesi = $sesi->map(function($item){
 

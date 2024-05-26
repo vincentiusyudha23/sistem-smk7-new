@@ -7,19 +7,19 @@
                     <div class="label">
                         <span class="label-text font-bold">Nama Mata Pelajaran</span>
                     </div>
-                    <input type="text" value="{{ auth()->user()->mapel->nama_mapel }}" disabled class="input input-sm input-bordered w-full" />
+                    <input required type="text" value="{{ auth()->user()->mapel->nama_mapel }}" disabled class="input input-sm input-bordered w-full" />
                 </label>
                 <label class="form-control w-full"> 
                     <div class="label">
                         <span class="label-text font-bold">Kode Mapel</span>
                     </div>
-                    <input type="text" value="{{ auth()->user()->mapel->kode_mapel }}" disabled class="input input-sm input-bordered w-full" />
+                    <input required type="text" value="{{ auth()->user()->mapel->kode_mapel }}" disabled class="input input-sm input-bordered w-full" />
                 </label>
                 <label class="form-control w-full"> 
                     <div class="label">
                         <span class="label-text font-bold">Tanggal Ujian</span>
                     </div>
-                    <input type="date" name="tanggal_ujian" class="input input-sm input-bordered w-full" />
+                    <input required type="date" name="tanggal_ujian" class="input input-sm input-bordered w-full" />
                 </label>
             </div>
             <div class="flex-grow w-1/2 px-1">
@@ -27,7 +27,7 @@
                     <div class="label">
                         <span class="label-text font-bold">Kelas</span>
                     </div>
-                    <select class="js-example-basic-multiple w-full" name="kelas[]" multiple="multiple">
+                    <select required class="js-example-basic-multiple w-full" name="kelas[]" multiple="multiple">
                         @foreach ($kelas as $item)
                             <option value="{{ $item->id_kelas }}">{{ $item->nama_kelas }}</option>
                         @endforeach
@@ -37,17 +37,17 @@
                     <div class="label">
                         <span class="label-text font-bold">Waktu Mulai</span>
                     </div>
-                    <input type="time" name="start" class="input input-sm input-bordered w-full" />
+                    <input required type="time" name="start" class="input input-sm input-bordered w-full" />
                 </label>
                 <label class="form-control w-full"> 
                     <div class="label">
                         <span class="label-text font-bold">Waktu Selesai</span>
                     </div>
-                    <input type="time" name="end" class="input input-sm input-bordered w-full" />
+                    <input required type="time" name="end" class="input input-sm input-bordered w-full" />
                 </label>
                 <div class="w-full h-full flex justify-end mt-8 gap-2 ">
                     <button type="submit" class="btn btn-sm btn-success text-white">Simpan</button>
-                    <button type="button" class="btn btn-sm btn-error text-white">Batalkan</button>
+                    <button type="button" class="btn btn-sm btn-error text-white btn-reset-form">Batalkan</button>
                 </div>
             </div>
         </div>

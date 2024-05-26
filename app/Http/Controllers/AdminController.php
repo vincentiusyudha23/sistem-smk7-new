@@ -150,21 +150,7 @@ class AdminController extends Controller
         if($request->hasFile('template_kelas')){
             $file = $request->file('template_kelas');
 
-            $import = Excel::import(new KelasImport, $file);
-
-            if($import){
-                $count = KelasJurusan::count();
-                return response()->json([
-                    'type' => 'success',
-                    'msg' => 'Berhasil Import Data Kelas',
-                    'count' => $count
-                ]);
-            } else {
-                return response()->json([
-                    'type' => 'error',
-                    'msg' => 'Gagal membuat data kelas.'
-                ]);
-            }
+            Excel::import(new KelasImport, $file);
         }
 
         return response()->json([

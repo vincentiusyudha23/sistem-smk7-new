@@ -24,6 +24,10 @@
 @push('script')
     <script>
         $(document).ready(function(){
+            $(document).on('click', '.btn-reset-form', function(){
+                $('#form-sesi-ujian')[0].reset();
+                $('.js-example-basic-multiple').val(null).trigger('change');
+            })
             $('.js-example-basic-multiple').select2({
                 placeholder: 'Pilih Kelas'
             });
@@ -123,12 +127,19 @@
                         if(response.type === 'success'){
                             toastr.success(response.msg);
                             $('#js-table-sesi').DataTable().ajax.reload();
+                            $('#modal-sesiedit-container').html(response.render);
+                            $('#form-sesi-ujian')[0].reset()
+                            $('.js-example-basic-multiple').val(null).trigger('change');
                         }
+                    },
+                    error: function(response){
                         if(response.type === 'error'){
                             toastr.error(response.msg)
                         }
-                        $('.loader').hide();
                     },
+                    complete: function(){
+                        $('.loader').hide();
+                    }
                 });
             });
 
