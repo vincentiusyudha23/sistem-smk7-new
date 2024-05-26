@@ -68,6 +68,7 @@
                 </tbody>
             </table>
         </div>
+        @include('admin.page.kelas_jurusan.modal-edit-kelas')
     </x-admin-all-layout>
 @endsection
 
@@ -113,6 +114,7 @@
                                     }).then( () => {
                                         $('.count-kelas').text(response.count);
                                         $('#js-table-kelas').DataTable().ajax.reload();
+                                        $('#modal-kelas-edit').html(response.render);
                                     });
                                 }
                                 if(response.type === "warning"){
@@ -123,6 +125,7 @@
                                     }).then( () => {
                                         $('.count-kelas').text(response.count);
                                         $('#js-table-kelas').DataTable().ajax.reload();
+                                        $('#modal-kelas-edit').html(response.render);
                                     });
                                 }
                                 if(response.type === "error"){
@@ -155,6 +158,7 @@
                         if(response.type == 'success'){
                             toastr.success(response.msg);
                             $('.count-kelas').text(response.count);
+                            $('#modal-kelas-edit').html(response.render);
                         }
                         if(response.type == 'error'){
                             toastr.error(response.msg);
@@ -168,10 +172,9 @@
                 });
             });
 
-             $(document).on('click', '.btn-delete-kelas', function(){
+            $(document).on('click', '.btn-delete-kelas', function(){
                 var el = $(this);
-                
-                
+            
                 Swal.fire({
                     title: "Hapus Kelas?",
                     icon: 'warning',
@@ -207,6 +210,47 @@
                 })
             })
 
+            $(document).on('submit', '#form-edit-kelas', function(e){
+                e.preventDefault();
+                var el = $(this);
+                var data = new FormData(this);
+                var spinner = '<span class="loading loading-spinner loading-sm"></span>';
+                var btn_save = el.find('button[type="submit"]');
+                var id_kelas = el.data('id_kelas');
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('admin.update_kelas') }}',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    beforeSend: function(){
+                        btn_save.html(spinner);
+                        btn_save.addClass('btn-disabled');
+                    },
+                    success: function(response){
+                        if(response.type === 'success'){
+                            toastr.success(response.msg);
+                            $('#js-table-kelas').DataTable().ajax.reload();
+                            btn_save.removeClass('btn-disabled');
+                            btn_save.text('Simpan');
+                            $('.close-btn-modal').trigger('click');
+                        }
+                        if(response.type === 'error'){
+                            toastr.error(response.msg);
+                            btn_save.removeClass('btn-disabled');
+                            btn_save.text('Simpan');
+                        }
+                    },
+                    error: function(response){
+                        toastr.error(response.msg);
+                        btn_save.removeClass('btn-disabled');
+                        btn_save.text('Simpan');
+                    }
+                })
+            });
+
             $('#js-table-kelas').DataTable({
                 ajax: '{{ route('admin.getDataKelas') }}',
                 columns: [
@@ -220,9 +264,18 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row){
-                            return `<a href="javascript:void(0)" class="btn btn-error btn-sm text-white btn-delete-kelas" data-id="${row.id_kelas}">
-                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
-                                </a>`
+                            var render = `
+                                    <div class="w-full flex-row gap-1 flex-wrap">
+                                        <button class="btn btn-sm btn-success text-white" onclick="$('#my_modal_${row.id_kelas}').get(0).showModal()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
+                                        </button>
+                                        <a href="javascript:void(0)" class="btn btn-error btn-sm text-white btn-delete-kelas" data-id="${row.id_kelas}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
+                                        </a>
+                                    </div>
+                                `;
+
+                            return render;
                         }
                     }
                 ],

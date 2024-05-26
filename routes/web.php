@@ -56,6 +56,7 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::get('/download_qr_code/{id}',[AdminController::class, 'download_qrcode'])->name('generate-qr.download');
     Route::get('/kelas-jurusan',[AdminController::class, 'kelas_jurusan'])->name('kelas_jurusan');
     Route::post('/kelas-jurusan-store',[AdminController::class, 'store_kelas'])->name('store_kelas');
+    Route::post('/kelas-jurusan-update',[AdminController::class, 'update_kelas'])->name('update_kelas');
     Route::post('/import_kelas',[AdminController::class, 'import_kelas'])->name('kelas.import');
     Route::get('/delete_kelas',[AdminController::class, 'delete_kelas'])->name('kelas.delete');
     Route::get('/detail_presensi/{id}',[AdminController::class, 'detail_presensi'])->name('detail_presensi');

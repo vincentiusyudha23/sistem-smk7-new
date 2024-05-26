@@ -132,7 +132,9 @@ class AdminController extends Controller
     {
         $kelas = KelasJurusan::count();
 
-        return view('admin.page.kelas_jurusan.kelas-jurusan',compact('kelas'));
+        $kelas_jurusan = KelasJurusan::orderBy('created_at','desc')->get();
+
+        return view('admin.page.kelas_jurusan.kelas-jurusan',compact('kelas','kelas_jurusan'));
     }
 
     public function store_kelas(Request $request)
@@ -170,7 +172,8 @@ class AdminController extends Controller
             return response()->json([
                 'type' => 'success',
                 'msg' => 'Berhasil Menambahkan Kelas Baru',
-                'count' => $count
+                'count' => $count,
+                'render' => $this->render_kelas_modal()
             ]);
         } catch(\Exception $e){
             return response()->json([
@@ -216,14 +219,16 @@ class AdminController extends Controller
                 return response()->json([
                     'type' => 'warning',
                     'msg' => $msg,
-                    'count' => $count_kelas
+                    'count' => $count_kelas,
+                    'render' => $this->render_kelas_modal(),
                 ]);
             }
             if(!$errors && $success){
                 return response()->json([
                     'type' => 'success',
                     'msg' => "Berhasil Import Data Kelas",
-                    'count' => $count_kelas
+                    'count' => $count_kelas,
+                    'render' => $this->render_kelas_modal(),
                 ]);
             }
         }
@@ -233,6 +238,37 @@ class AdminController extends Controller
             'msg' => 'File tidak ditemukan / tidak valid'
         ]);
     }
+
+    public function update_kelas(Request $request)
+    {
+        $request->validate([
+            'jurusan' => 'required',
+            'kelas' => 'required',
+            'nama_kelas' => 'required',
+            'id_kelas' => 'required'
+        ]);
+
+        try{
+            KelasJurusan::find($request->id_kelas)->update([
+                'jurusan' => $request->jurusan,
+                'kelas' => $request->kelas,
+                'nama_kelas' => $request->nama_kelas,
+                'slug' => Str::slug($request->nama_kelas)
+            ]);
+
+            return response()->json([
+                'type' => 'success',
+                'msg' => 'Kelas berhasil di Update.'
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'type' => 'error',
+                'msg' => 'Gagal update Kelas.'
+            ]);
+        };
+    }
+
+
 
     public function delete_kelas(Request $request)
     {
@@ -257,6 +293,13 @@ class AdminController extends Controller
         }
 
         return response()->json(['type'=>'error', 'msg' => 'Kelas Tidak Ditemukan.']);
+    }
+
+    public function render_kelas_modal()
+    {
+        $kelas_jurusan = KelasJurusan::orderBy('created_at','desc')->get();
+
+        return View::make('admin.page.kelas_jurusan.modal-edit-kelas', compact('kelas_jurusan'))->render();
     }
 
     public function generate_qr_code()
