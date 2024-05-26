@@ -22,7 +22,7 @@ class KelasImport implements ToCollection, WithHeadingRow
         foreach($rows as $row)
         {
             if(KelasJurusan::where('nama_kelas',$row['Nama Kelas'])->exists() || KelasJurusan::where('slug',Str::slug($row['Nama Kelas']))->exists()){
-                $errors[] = "Kelas ".$row['Nama Kelas']." Sudaf Terdaftar";
+                $errors[] = "Kelas ".$row['Nama Kelas']." Sudah Terdaftar";
                 continue;
             }
             $kelas = [

@@ -10,7 +10,10 @@
     <x-admin-all-layout>
         <h1 class="text-2xl font-bold my-2">Buat Akun Siswa</h1>
         @include('admin.page.siswa.partial.form_akun')
-        <h1 class="text-2xl font-bold mt-10 mb-5">List Akun Siswa</h1>
+        <div class="w-full inline-flex justify-between items-center">
+            <h1 class="text-2xl font-bold mt-10 mb-5">List Akun Siswa</h1>
+            <a href="{{ route('admin.download.data.siswa') }}" class="btn btn-sm btn-info text-white">Download Data Siswa</a>
+        </div>
         @include('admin.page.siswa.partial.tabel_siswa')
         @include('admin.page.siswa.partial.modal_siswa')
     </x-admin-all-layout>

@@ -14,6 +14,7 @@ use App\Exports\KelasTemplate;
 use App\Exports\SiswaTemplate;
 use App\Models\PresensiPulang;
 use App\Models\SesiUjianKelas;
+use App\Exports\SiswaDataExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DataController extends Controller
@@ -113,6 +114,11 @@ class DataController extends Controller
     public function template_siswa()
     {
         return Excel::download(new SiswaTemplate, 'template_siswa.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function data_siswa()
+    {
+        return Excel::download(new SiswaDataExport, 'Data_siswa.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function getSesiUjian()
