@@ -148,11 +148,11 @@ class DataController extends Controller
 
     public function getDataPresensi()
     {
-        $masuk = PresensiMasuk::where('created_at', Carbon::today())->latest();
-        $pulang = PresensiPulang::where('created_at', Carbon::today())->latest();
+        $masuk = PresensiMasuk::where('created_at', Carbon::today());
+        $pulang = PresensiPulang::where('created_at', Carbon::today());
 
         $presensi = $masuk->unionAll($pulang)->orderBy('created_at', 'desc')->get();
-        
+
         $presensi = $presensi->map(function($item){
             return [
                 'tanggal' => $item->created_at->format('d/m/Y'),
