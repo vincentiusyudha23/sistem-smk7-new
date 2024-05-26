@@ -8,14 +8,15 @@ use App\Models\Siswa;
 use App\Models\OrangTua;
 use App\Models\KelasSiswa;
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use App\Models\KelasJurusan;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Concerns\ToModel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 HeadingRowFormatter::default('none');
 
@@ -23,7 +24,8 @@ class SiswaImport implements ToCollection, WithHeadingRow
 {
     public function collection(Collection $rows)
     {
-        
+        $errors = [];
+        $success = [];
         foreach ($rows as $row) {
             // Abaikan baris kosong
             if (empty($row['Nama Siswa']) || empty($row['Nama Orang Tua']) || empty($row['Kelas'])) {
@@ -40,6 +42,11 @@ class SiswaImport implements ToCollection, WithHeadingRow
                 $nomor_telepon_ortu = '08'.substr($row['Nomor Telepon Orang Tua'], 1);
             } else {
                 $nomor_telepon_ortu = (string) $row['Nomor Telepon Orang Tua'];
+            }
+
+            if (Siswa::where('nis', $row['NIS'])->exists()) {
+                $errors[] = "NIS <strong>" . $row['NIS'] . "</strong> sudah terdaftar dalam sistem.";
+                continue;
             }
             
             // Buat user
@@ -76,16 +83,26 @@ class SiswaImport implements ToCollection, WithHeadingRow
                         'id_kelas' => $kelas->id_kelas,
                         'id_siswa' => $siswa->id_siswa
                     ]);
+
+                    $success[] = 'success';
+
                 } catch(\Exception $ex){
                     User::destroy($user->id);
                     OrangTua::destroy($orang_tua->id_orangtua);
                 }
             } else {
-                // Log jika kelas tidak ditemukan
                 User::destroy($user->id);
                 OrangTua::destroy($orang_tua->id_orangtua);
-                \Log::error('Kelas tidak ditemukan: ' . $row['Kelas']);
+
+                $errors[] = "Kelas <strong>".$row['Kelas']."</strong> Pada Siswa bernama <strong>".$row['Nama Siswa']."</strong> Tidak Ditemukan!";
             }
+        }
+
+        if (count($errors) > 0) {
+            Session::flash('import_errors', $errors);
+        }
+        if(count($success) > 0){
+            Session::flash('import_success', $success);
         }
     }
 }

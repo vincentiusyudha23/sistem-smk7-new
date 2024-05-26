@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -57,7 +58,28 @@ class AdminController extends Controller
     public function akun_siswa()
     {
         $kelas = KelasJurusan::orderBy('nama_kelas', 'asc')->get();
-        return view('admin.page.siswa.kelola_siswa', compact('kelas'));
+
+        $siswas = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
+        
+        $siswas = $siswas->map(function($item){
+            $all_kelas = KelasJurusan::pluck('nama_kelas','id_kelas')->toArray();
+            
+            return [
+                'id_siswa' => $item->id_siswa,
+                'nama' => $item->nama,
+                'nis' => $item->nis,
+                'username' => $item->users->username,
+                'password' => $item->password,
+                'kelas' => $item->getKelas()?->nama_kelas ?? '',
+                'all_kelas' => $all_kelas,
+                'id_kelas' => $item->kelas?->id_kelas ?? '',
+                'tanggal_lahir' => $item->tanggal_lahir->format('Y-m-d'),
+                'orang_tua' => $item->orangTua->nama,
+                'nomor_telp' => $item->orangTua->nomor_telepon
+            ];
+        });
+
+        return view('admin.page.siswa.kelola_siswa', compact('kelas','siswas'));
     }
 
     public function akun_mapel()
@@ -322,7 +344,8 @@ class AdminController extends Controller
         
                 return response()->json([
                     'type' => 'success', 
-                    'msg'  => 'Berhasil Membuat Akun Siswa'
+                    'msg'  => 'Berhasil Membuat Akun Siswa',
+                    'render' => $this->render_modal_siswa()
                 ]);
             } else {
                 if($orang_tua){
@@ -341,17 +364,51 @@ class AdminController extends Controller
         }
     }
 
-    public function import_siswa(Request $request) : JsonResponse
+    public function import_siswa(Request $request)
     {
         if($request->hasFile('file_siswa')){
             $file = $request->file('file_siswa');
 
             Excel::import(new SiswaImport, $file);
 
-            return response()->json([
-                'type' => 'success',
-                'msg'  => 'Berhasil Membuat Akun Siswa'
-            ]);
+            $errors = Session::get('import_errors');
+            $success = Session::get('import_success');
+
+    
+            if($errors && !$success){
+                $message = 'Gagal Import Akun Siswa <br><br>';
+                $message .= '*Catatan Gagal Membuat Data Siswa berikut:<br>';
+                
+                foreach ($errors as $error) {
+                   $message .= "- ".$error."<br>";
+                }
+
+                return response()->json([
+                    'type' => 'error',
+                    'msg'  => $message
+                ]);
+            }
+            if($errors && $success){
+                $message = 'Berhasil Import Akun Siswa <br><br>';
+                $message .= '*Catatan Gagal Membuat Data Siswa berikut:<br>';
+                
+                foreach ($errors as $error) {
+                   $message .= "- ".$error."<br>";
+                }
+
+                return response()->json([
+                    'type' => 'warning',
+                    'msg'  => $message
+                ]);
+            } 
+
+            if(!$errors && $success){
+                return response()->json([
+                    'type' => 'success',
+                    'msg'  => 'Berhasil Import Akun Siswa'
+                ]);
+            }
+
         } else {
             return response()->json([
                 'type' => 'error',
@@ -413,8 +470,36 @@ class AdminController extends Controller
 
         return response()->json([
             'type' => 'success',
-            'msg' => 'Akun Siswa Berhasil dihapus'
+            'msg' => 'Akun Siswa Berhasil dihapus',
+            'render' => $this->render_modal_siswa()
         ]);
+    }
+
+    private function render_modal_siswa()
+    {
+        $kelas = KelasJurusan::orderBy('nama_kelas', 'asc')->get();
+
+        $siswas = Siswa::orderBy('created_at', 'desc')->with('orangTua')->get();
+        
+        $siswas = $siswas->map(function($item){
+            $all_kelas = KelasJurusan::pluck('nama_kelas','id_kelas')->toArray();
+            
+            return [
+                'id_siswa' => $item->id_siswa,
+                'nama' => $item->nama,
+                'nis' => $item->nis,
+                'username' => $item->users->username,
+                'password' => $item->password,
+                'kelas' => $item->getKelas()?->nama_kelas ?? '',
+                'all_kelas' => $all_kelas,
+                'id_kelas' => $item->kelas?->id_kelas ?? '',
+                'tanggal_lahir' => $item->tanggal_lahir->format('Y-m-d'),
+                'orang_tua' => $item->orangTua->nama,
+                'nomor_telp' => $item->orangTua->nomor_telepon
+            ];
+        });
+
+        return View::make('admin.page.siswa.partial.modal_siswa', compact('siswas', 'kelas'))->render(); 
     }
 
     public function store_mapel(Request $request)

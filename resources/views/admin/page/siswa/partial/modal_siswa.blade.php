@@ -1,7 +1,4 @@
-@php
-    $kelas_all = \app\Models\kelasJurusan::all();
-@endphp
-
+<div id="modal-siswa-edit">
 @foreach ($siswas as $siswa)
     <dialog id="my_modal_{{ $siswa['id_siswa'] }}" class="modal p-0 m-0">
         <div class="modal-box">
@@ -56,7 +53,7 @@
                             </div>
                             <select required name="kelas" class="select select-sm select-bordered w-full">
                                 <option disabled>Pilih kelas</option>
-                                @foreach ($kelas_all as $item)
+                                @foreach ($kelas as $item)
                                     <option value="{{ $item->id_kelas }}" {{ $siswa['id_kelas'] === $item->id_kelas ? 'selected' : '' }}>
                                         {{ $item->nama_kelas }}
                                     </option>
@@ -86,3 +83,4 @@
         </div>
     </dialog>
 @endforeach
+</div>
