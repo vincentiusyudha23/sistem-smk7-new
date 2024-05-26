@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use App\Models\PresensiMasuk;
 use App\Models\PresensiPulang;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,7 +48,31 @@ class AdminController extends Controller
             $persen_hadir = 0;
         }
 
-        return view('admin.page.dashboard.dashboard', compact('siswa','presensiMasuk','presensiPulang','persen_hadir'));
+        // Ambil data dari Senin hingga Jumat pada minggu ini
+        $startDate = Carbon::now()->startOfWeek(Carbon::MONDAY);
+        $endDate = Carbon::now()->endOfWeek(Carbon::FRIDAY);
+
+        $presensi = PresensiMasuk::whereBetween('created_at', [$startDate, $endDate])
+                            ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
+                            ->groupBy('date')
+                            ->get();
+
+        // Isi data kosong untuk hari yang tidak ada presensinya
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $weeklyData = [];
+
+        foreach ($days as $day) {
+            $weeklyData[$day] = 0; // Set default value to 0
+        }
+
+        foreach ($presensi as $item) {
+            $dayName = Carbon::parse($item->date)->format('l');
+            if (in_array($dayName, $days)) {
+                $weeklyData[$dayName] = $item->count;
+            }
+        }
+
+        return view('admin.page.dashboard.dashboard', compact('siswa','presensiMasuk','presensiPulang','persen_hadir','weeklyData'));
     }
 
     public function register()

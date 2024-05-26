@@ -67,6 +67,7 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::get('/get-data-mapel',[DataController::class, 'getDataMapel'])->name('getDataMapel');
     Route::get('/template_kelas',[DataController::class, 'template_kelas'])->name('download.template.kelas');
     Route::get('/template_siswa',[DataController::class, 'template_siswa'])->name('download.template.siswa');
+    Route::get('/get-data-presensi',[DataController::class, 'getDataPresensi'])->name('getDataPresensi');
 });
     
 Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(function(){

@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="w-full px-10">
-                <h1 class="text-2xl font-bold">Grafik Presensi Siswa</h1>
+                <h1 class="text-2xl font-bold mb-3">Grafik Presensi Siswa</h1>
                 <canvas id="myChart"  height="75"></canvas>
             </div>
             @include('admin.page.dashboard.partial.table_presensi')
@@ -84,58 +84,88 @@
 
 @push('script')
     <script>
-        const mychart = document.getElementById('myChart');
-
-        const labels = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const data = {
-            labels: labels,
-            datasets: [{
-                label: 'My First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40, 30, 53, 43, 33, 23],
-                fill: true,
-                borderColor: 'rgb(96 165 250)',
-                backgroundColor: getGradient('rgb(96 165 250)'),
-                borderWidth: 3,
-                pointBackgroundColor: '#ff00',
-                pointBorderColor: '#ff00',
-                tension: 0.04
-            }]
-        }
-        const config = {
+        $(document).ready(function(){
+            const presensiChart  = document.getElementById('myChart');
+    
+            const labels = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+            const data = @json(array_values($weeklyData));
+            
+            const config = {
             type: 'line',
-            data: data,
-            option: {
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Presensi',
+                    data: data,
+                    fill: true,
+                    borderColor: 'rgb(96, 165, 250)',
+                    backgroundColor: getGradient('rgb(96, 165, 250)'),
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ff0000',
+                    pointBorderColor: '#ff0001',
+                    tension: 0.04
+                }]
+            },
+            options: {
                 plugins: {
-                        title: {
-                            display: false
-                        },
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            displayColors: false
-                        }
+                    title: {
+                        display: false
                     },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
+                    legend: {
+                        display: false
                     },
-                    responsive: true,
+                    tooltip: {
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                responsive: true
             }
-        }
+        };
 
-        new Chart(mychart, config)
+        new Chart(presensiChart, config);
 
         function getGradient(color) {
-                const ctx = document.getElementById('myChart').getContext('2d');
-                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, color); // Start color
-                gradient.addColorStop(1, '#35B0A500'); // End color
-                return gradient;
-            }
+            const ctx = presensiChart.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, color); // Start color
+            gradient.addColorStop(1, 'rgba(53, 176, 165, 0)'); // End color
+            return gradient;
+        }
+
+            $('#js-table-list-presensi').DataTable({
+                ajax: "{{ route('admin.getDataPresensi') }}",
+                columns: [
+                    { data: null, orderable: false, searchable: false },
+                    {data: 'tanggal'},
+                    {data: 'nama_siswa'},
+                    {data: 'nis'},
+                    {data: 'kelas'},
+                    {data: 'status'},
+                ],
+                columnDefs : [
+                    {
+                        'target': '_all',
+                        'className': 'dt-head-center'
+                    },
+                    {
+                        'target': '_all',
+                        'className': 'dt-body-center'
+                    },
+                    { width: '50px', target: 0 }
+                ],
+                createdRow: function(row, data, dataIndex) {
+                    // Set nomor urut
+                    $('td:eq(0)', row).html(dataIndex + 1);
+                }
+            });
+        });
     </script>
 @endpush
 

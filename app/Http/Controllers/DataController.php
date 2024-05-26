@@ -139,4 +139,24 @@ class DataController extends Controller
         });
         return response()->json(['data' => $ujian]);
     }
+
+    public function getDataPresensi()
+    {
+        $masuk = PresensiMasuk::where('created_at', Carbon::today())->latest();
+        $pulang = PresensiPulang::where('created_at', Carbon::today())->latest();
+
+        $presensi = $masuk->unionAll($pulang)->orderBy('created_at', 'desc')->get();
+
+        $presensi = $presensi->map(function($item){
+            return [
+                'tanggal' => $item->created_at->format('d/m/Y'),
+                'nama_siswa' => $item->siswa?->nama ?? '',
+                'nis' => $item->siswa?->nis ?? '',
+                'kelas' =>  getKelasSiswa($item->siswa?->kelas?->id_kelas),
+                'status' => $item->status
+            ];
+        });
+
+        return response()->json(['data' => $presensi]);
+    }
 }
