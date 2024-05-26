@@ -49,14 +49,14 @@ class AdminController extends Controller
         }
 
         // Ambil data dari Senin hingga Jumat pada minggu ini
-        $startDate = Carbon::now()->startOfWeek(Carbon::MONDAY);
-        $endDate = Carbon::now()->endOfWeek(Carbon::FRIDAY);
-
+        $startDate = Carbon::now()->startOfWeek();
+        $endDate = Carbon::now()->endOfWeek();
+        
         $presensi = PresensiMasuk::whereBetween('created_at', [$startDate, $endDate])
                             ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
                             ->groupBy('date')
                             ->get();
-
+        
         // Isi data kosong untuk hari yang tidak ada presensinya
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
         $weeklyData = [];
@@ -66,12 +66,12 @@ class AdminController extends Controller
         }
 
         foreach ($presensi as $item) {
-            $dayName = Carbon::parse($item->date)->format('l');
+            $dayName = Carbon::parse($item->date)->isoFormat('dddd');
             if (in_array($dayName, $days)) {
                 $weeklyData[$dayName] = $item->count;
             }
         }
-
+        
         return view('admin.page.dashboard.dashboard', compact('siswa','presensiMasuk','presensiPulang','persen_hadir','weeklyData'));
     }
 

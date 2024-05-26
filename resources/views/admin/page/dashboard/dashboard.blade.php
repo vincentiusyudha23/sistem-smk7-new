@@ -101,8 +101,8 @@
                     borderColor: 'rgb(96, 165, 250)',
                     backgroundColor: getGradient('rgb(96, 165, 250)'),
                     borderWidth: 3,
-                    pointBackgroundColor: '#ff0000',
-                    pointBorderColor: '#ff0001',
+                    pointBackgroundColor: '#0659bf',
+                    pointBorderColor: '#0659bf',
                     tension: 0.04
                 }]
             },

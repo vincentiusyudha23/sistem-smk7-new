@@ -51,8 +51,8 @@ class SiswaImport implements ToCollection, WithHeadingRow
             
             // Buat user
             $user = User::create([
-                'username' => $row['username'] ?? $base_acct,
-                'password' => $row['password'] ?? Hash::make($base_acct),
+                'username' => $row['Username'] ?? $base_acct,
+                'password' => $row['Password'] ?? Hash::make($base_acct),
                 'role' => 'siswa'
             ]);
 
@@ -72,7 +72,7 @@ class SiswaImport implements ToCollection, WithHeadingRow
                     $siswa = Siswa::create([    
                         'user_id' => $user->id,
                         'id_orangtua' => $orang_tua->id_orangtua,
-                        'password' => $base_acct,
+                        'password' => $row['Password'] ?? $base_acct,
                         'nama' => (string) $row['Nama Siswa'],
                         'nis' => (string) $row['NIS'],
                         'tanggal_lahir' => $tanggal_lahir
