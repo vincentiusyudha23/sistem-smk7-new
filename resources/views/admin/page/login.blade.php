@@ -10,7 +10,7 @@
             <img src="{{ asset('asset/logo/logo_smk7.png') }}" style="width: 268px; height: 320px;" class="scale-50 md:scale-100">
         </div>
         <div class="w-full md:w-[50%] h-[50vh] md:h-full flex justify-center items-center">
-            <div class="flex flex-col md:w-[40%]">
+            <div class="flex flex-col md:w-[40%] mt-2">
                 <div class="flex justify-center items-center mb-5">
                     <h1 class="text-blue-600 font-bold text-2xl text-center">Login Admin</h1>
                 </div>
