@@ -132,6 +132,7 @@
 
             $('#js-table-mapel').DataTable({
                 ajax: '{{ route('admin.getDataMapel') }}',
+                responsive: true,
                 columns: [
                      { data: null, orderable: false, searchable: false },
                      {data: 'nama_mapel'},

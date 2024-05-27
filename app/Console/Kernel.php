@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Carbon\Carbon;
 use App\Models\SesiUjian;
+use App\Jobs\UpdateStatusUjian;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,16 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call(function(){
-            SesiUjian::where('status', 1)
-            ->where('tanggal_ujian', Carbon::now())
-            ->where('end', '=>', Carbon::now()->format('H:i:s'))
-            ->update([
-                'status' => 2
-            ]);
-        })->everyMinute();
+        $schedule->job(new UpdateStatusUjian)->everyMinute();
+        
     }
-
     /**
      * Register the commands for the application.
      */

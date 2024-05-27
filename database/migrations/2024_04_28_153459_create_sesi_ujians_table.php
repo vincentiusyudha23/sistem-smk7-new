@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_mapel')->references('id_mapel')->on('mapels')->cascadeOnDelete();
             $table->date('tanggal_ujian');
-            $table->time('start', $precision = 0);
-            $table->time('end', $precision = 0);
+            $table->dateTime('start', $precision = 0);
+            $table->dateTime('end', $precision = 0);
             $table->timestamps();
         });
     }

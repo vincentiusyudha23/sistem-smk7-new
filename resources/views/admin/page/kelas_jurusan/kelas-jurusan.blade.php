@@ -2,8 +2,8 @@
 
 @section('content')
     <x-admin-all-layout>
-        <div class="w-full py-2 gap-2 flex">
-            <div class="w-[70%] bg-slate-200 rounded-md">
+        <div class="w-full py-2 gap-2 flex flex-col-reverse md:flex-row">
+            <div class="w-full md:w-[70%] bg-slate-200 rounded-md">
                 <form class="p-3" id="form-kelas_jurusan">
                     @csrf
                     <div class="flex-grow">
@@ -44,8 +44,8 @@
                     </div>
                 </form>
             </div>
-            <div class="w-[30%] text-white bg-blue-500 rounded-md flex flex-col justify-center items-center gap-3">
-                <h1 class="text-8xl count-kelas">{{ $kelas }}</h1>
+            <div class="w-full md:w-[30%] py-2 md:py-0 text-white bg-blue-500 rounded-md flex flex-col justify-center items-center gap-3">
+                <h1 class="text-6xl md:text-8xl count-kelas">{{ $kelas }}</h1>
                 <h1 class="text-4xl font-bold">Kelas</h1>
             </div>
         </div>
@@ -253,6 +253,7 @@
 
             $('#js-table-kelas').DataTable({
                 ajax: '{{ route('admin.getDataKelas') }}',
+                responsive: true,
                 columns: [
                     { data: null, orderable: false, searchable: false },
                     { data: 'jurusan'},

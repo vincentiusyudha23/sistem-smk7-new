@@ -38,13 +38,13 @@
                             <div class="label">
                                 <span class="label-text font-bold">Waktu Mulai</span>
                             </div>
-                            <input required type="time" name="start" value="{{ $item['start'] }}" placeholder="Type here" class="input input-sm input-bordered w-full" />
+                            <input required type="time" name="start" value="{{ $item['start']->format('H:i:s') }}" placeholder="Type here" class="input input-sm input-bordered w-full" />
                         </label>
                         <label class="form-control w-full"> 
                             <div class="label">
                                 <span class="label-text font-bold">Waktu Selesai</span>
                             </div>
-                            <input required type="time" name="end" value="{{ $item['end'] }}" placeholder="Type here" class="input input-sm input-bordered w-full" />
+                            <input required type="time" name="end" value="{{ $item['end']->format('H:i:s') }}" placeholder="Type here" class="input input-sm input-bordered w-full" />
                         </label>
                     </div>
                 </div>

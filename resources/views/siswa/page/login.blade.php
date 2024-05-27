@@ -5,12 +5,12 @@
 @endsection
 
 @section('content')
-    <div class="w-full h-screen flex flex-row">
-        <div class="w-[50%] h-full bg-gray-300 flex justify-center items-center">
-            <img src="{{ asset('asset/logo/logo_smk7.png') }}" style="width: 268px; height: 320px;">
+    <div class="w-full h-full md:h-screen flex flex-col md:flex-row">
+        <div class="w-full md:w-[50%] h-[40vh] md:h-full bg-gray-300 flex justify-center items-center">
+            <img src="{{ asset('asset/logo/logo_smk7.png') }}" style="width: 268px; height: 320px;" class="scale-50 md:scale-100">
         </div>
-        <div class="w-[50%] h-full flex justify-center items-center">
-            <div class="flex flex-col w-[40%]">
+        <div class="w-full md:w-[50%] h-[50vh] md:h-full flex justify-center items-center">
+            <div class="flex flex-col md:w-[40%]">
                 <div class="flex justify-center items-center mb-5">
                     <h1 class="text-blue-600 font-bold text-2xl text-center">Login Siswa</h1>
                 </div>
@@ -42,7 +42,6 @@
                        </label>
                     </div>
                     <button type="submit" class="btn btn-primary mb-3 text-white text-lg w-full">Sign In</button>
-                    {{-- <a href="{{ route('siswa.dashboard') }}" class="btn btn-primary mb-3 text-white text-lg w-full">Sign In</a> --}}
                 </form>
             </div>
         </div>

@@ -7,15 +7,10 @@
 @endsection
 
 @section('content')
-    <div class="flex flex-row">
-        <div class="w-[20%]">
-            @include('mapel.sidebar.sidebar')
-        </div>
-        <div class="w-[80%] p-10">
-            <h1 class="text-2xl font-bold mt-10 mb-5">List Hasil Ujian</h1>
-            @include('mapel.page.hasilUjian.partial.tabel-hasil-ujian')
-        </div>
-    </div>
+    <x-mapel-layout>
+        <h1 class="text-2xl font-bold mb-5">List Hasil Ujian</h1>
+        @include('mapel.page.hasilUjian.partial.tabel-hasil-ujian')
+    </x-mapel-layuot>
 @endsection
 
 @push('script')

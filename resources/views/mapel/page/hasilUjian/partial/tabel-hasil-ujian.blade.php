@@ -17,9 +17,9 @@
             <tr>
                 <th>{{ $loop->index + 1 }}</th>
                 <td>{{ auth()->user()->mapel->nama_mapel }}</td>
-                <td>{{ date('d-m-Y', strtotime($item->tanggal_ujian)) }}</td>
-                <td>{{ $item->start }}</td>
-                <td>{{ $item->end }}</td>
+                <td>{{ $item->tanggal_ujian->format('d/m/Y') }}</td>
+                <td>{{ $item->start->format('H:i') }}</td>
+                <td>{{ $item->end->format('H:i') }}</td>
                 <td>
                     @if ($item->status == 0)
                         <a href="javascript:void(0)" class="btn btn-xs btn-circle btn-warning text-white w-full">Belum Mulai</a>                            
@@ -33,7 +33,7 @@
                 </td>
                 <td>
                     <div class="tooltip" data-tip="Lihat">
-                        <a href="{{ route('mapel.hasil-ujian-siswa', ['id' => $item->id]) }}" class="{{ count($item->hasil_ujian) > 0 ? '' : 'btn-disabled' }} btn btn-sm btn-info text-white">
+                        <a href="{{ route('mapel.hasil-ujian-siswa', ['id' => $item->id]) }}" class="btn btn-sm btn-info text-white">
                             Lihat
                         </a>
                     </div>

@@ -8,8 +8,8 @@
 
 @section('content')
     <x-admin-all-layout>
-        <div class="w-full h-full flex pt-20">
-            <div class="w-1/2 h-full flex flex-col justify-center items-center">
+        <div class="w-full h-full flex flex-col md:flex-row md:pt-20 gap-2 md:gap-0">
+            <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center">
                 <strong class="mb-2 text-lg">Qr Code Masuk</strong>
                 <div class="qr-code-masuk mb-5 w-[300px] h-[300px] flex justify-center items-center bg-black/10 border-2 border-black">
                     <img src="data:image/png;base64, {!! base64_encode(generateQrcode($qr_code['masuk'])) !!} ">
@@ -29,7 +29,7 @@
                     @endif
                 </div>
             </div>
-            <div class="w-1/2 h-full flex flex-col justify-center items-center">
+            <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center">
                 <strong class="mb-2 text-lg">Qr Code Pulang</strong>
                 <div class="qr-code-pulang mb-5 w-[300px] h-[300px] flex justify-center items-center bg-black/10 border-2 border-black">
                    <img src="data:image/png;base64, {!! base64_encode(generateQrcode($qr_code['pulang'])) !!} ">

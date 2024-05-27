@@ -47,6 +47,7 @@
                     },
                     { width: '50px', target: 0 }
                 ],
+                responsive: true,
             });
         });
     </script>

@@ -96,8 +96,8 @@ class DataController extends Controller
                 'mata_pelajaran' => $item->mapel->nama_mapel,
                 'kelas' => $kelas,
                 'tanggal' => $item->tanggal_ujian->format('d/m/Y'),
-                'start' => $item->start,
-                'end' => $item->end,
+                'start' => $item->start->format('H:i'),
+                'end' => $item->end->format('H:i'),
                 'status' => $item->status,
                 'soal' => $item->soal_ujian
             ];
@@ -136,8 +136,8 @@ class DataController extends Controller
                 'mata_pelajaran' => $sesi->mapel->nama_mapel,
                 'kode_mapel' => $sesi->mapel->kode_mapel,
                 'tanggal_ujian' => $sesi->tanggal_ujian->format('d/m/Y'),
-                'start' => $sesi->start,
-                'end' => Carbon::parse($sesi->end)->format('H:i:s'),
+                'start' => $sesi->start->format('H:i'),
+                'end' => $sesi->end->format('H:i'),
                 'status' => $sesi->status,
                 'status_hasil' => $hasil,
                 'soal_ujian' => $sesi->soal_ujian
@@ -164,5 +164,22 @@ class DataController extends Controller
         });
 
         return response()->json(['data' => $presensi]);
+    }
+
+    public function getHasilUjianSiswa($id)
+    {
+        $hasil_ujians = HasilUjian::where('id_sesi_ujian', $id)->with(['siswa'])->orderBy('created_at', 'desc')->get();
+
+        $hasil_ujians = $hasil_ujians->map(function($item){
+            return [
+                'nama_siswa' => $item->siswa->nama,
+                'nis' => $item->siswa->nis,
+                'kelas' => $item->siswa?->kelas?->kelas?->nama_kelas,
+                'nilai' => $item->nilai,
+                'tanggal' => $item->sesi_ujian->tanggal_ujian->format('d/m/Y')
+            ];
+        });
+
+        return response()->json(['data' => $hasil_ujians]);
     }
 }

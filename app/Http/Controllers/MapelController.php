@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\SesiUjian;
 use App\Models\HasilUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Models\SesiUjianKelas;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 
@@ -18,7 +20,29 @@ class MapelController extends Controller
      */
     public function index()
     {
-        return view('mapel.page.dashboard.dashboard');
+        $sesi = SesiUjian::where('id_mapel', auth()->user()->mapel->id_mapel)->orderBy('created_at', 'desc')->get();
+
+        $id_sesi = $sesi->pluck('id')->toArray();
+
+        $hasil_ujian = HasilUjian::whereIn('id_sesi_ujian', $id_sesi)
+                ->select(
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('YEAR(created_at) as year'),
+                    DB::raw('AVG(nilai) as average_score')
+                )
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'asc')
+                ->orderBy('month', 'asc')
+                ->get();
+        
+        $chartData = array_fill(1, 12, 0);
+
+        foreach ($hasil_ujian as $data) {
+            $chartData[$data->month] = $data->average_score;
+        }
+
+
+        return view('mapel.page.dashboard.dashboard', compact('sesi','chartData'));
     }
 
     public function login()
@@ -83,13 +107,15 @@ class MapelController extends Controller
             'start' => 'required',
             'end' => 'required'
         ]);
-        // dd($request->all());
+        
         try{
+            $waktu_mulai = $request->tanggal_ujian." ".$request->start;
+            $waktu_selesai = $request->tanggal_ujian." ".$request->end;
             $sesi_ujian = SesiUjian::create([
                     'id_mapel' => auth()->user()->mapel->id_mapel,
                     'tanggal_ujian' => $request->tanggal_ujian,
-                    'start' => $request->start,
-                    'end' => $request->end
+                    'start' => Carbon::parse($waktu_mulai),
+                    'end' => Carbon::parse($waktu_selesai)
                 ]);
 
             $sesi_kelas = [];
@@ -123,10 +149,12 @@ class MapelController extends Controller
     {
         try{
             $sesi_ujian = SesiUjian::find($request->idSesi);
+            $waktu_mulai = $request->tanggal_ujian." ".$request->start;
+            $waktu_selesai = $request->tanggal_ujian." ".$request->end;
             $sesi_ujian->update([
                 'tanggal_ujian' => $request->tanggal_ujian,
-                'start' => $request->start,
-                'end' => $request->end
+                'start' => Carbon::parse($waktu_mulai),
+                'end' => Carbon::parse($waktu_selesai)
             ]);
             
             SesiUjianKelas::where('id_sesi_ujian', $sesi_ujian->id)->delete();

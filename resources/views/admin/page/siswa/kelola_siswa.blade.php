@@ -202,6 +202,7 @@
 
             $('#js-table-siswa').DataTable({
                 ajax: '{{ route('admin.getDataSiswa') }}',
+                responsive: true,
                 columns: [
                      { data: null, orderable: false, searchable: false },
                      {data: 'nama'},

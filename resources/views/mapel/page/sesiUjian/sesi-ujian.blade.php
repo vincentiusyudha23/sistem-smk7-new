@@ -7,18 +7,13 @@
 @endsection
 
 @section('content')
-    <div class="flex flex-row">
-        <div class="w-[20%]">
-            @include('mapel.sidebar.sidebar')
-        </div>
-        <div class="w-[80%] p-10">
-            <h1 class="text-2xl font-bold my-2">Buat Sesi Ujian</h1>
-            @include('mapel.page.sesiUjian.partial.form_sesi_ujian')
-            <h1 class="text-2xl font-bold mt-10">List Sesi Ujian</h1>
-            @include('mapel.page.sesiUjian.partial.tabel_sesi_ujian')
-            @include('mapel.page.sesiUjian.partial.modal-edit')
-        </div>
-    </div>
+    <x-mapel-layout>
+        <h1 class="text-2xl font-bold my-2">Buat Sesi Ujian</h1>
+        @include('mapel.page.sesiUjian.partial.form_sesi_ujian')
+        <h1 class="text-2xl font-bold mt-10">List Sesi Ujian</h1>
+        @include('mapel.page.sesiUjian.partial.tabel_sesi_ujian')
+        @include('mapel.page.sesiUjian.partial.modal-edit')
+    </x-mapel-layout>
 @endsection
 
 @push('script')
@@ -184,6 +179,7 @@
 
             $('#js-table-sesi').DataTable({
                 ajax: '{{ route('mapel.getDataSesi', ["id_mapel" => auth()->user()->mapel->id_mapel]) }}',
+                responsive: true,
                 columns: [
                     { data: null, orderable: false, searchable: false },
                     {data: 'mata_pelajaran'},

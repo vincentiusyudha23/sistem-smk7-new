@@ -7,15 +7,10 @@
 @endsection
 
 @section('content')
-    <div class="flex flex-row">
-        <div class="w-[20%]">
-            @include('mapel.sidebar.sidebar')
-        </div>
-        <div class="w-[80%] p-10">
-            <h1 class="text-2xl font-bold my-2">Soal Ujian {{ auth()->user()->mapel->nama_mapel }}</h1>
-            @include('mapel.page.soalUjian.partial.form-soal')
-        </div>
-    </div>
+    <x-mapel-layout>
+        <h1 class="text-2xl font-bold my-2">Soal Ujian {{ auth()->user()->mapel->nama_mapel }}</h1>
+        @include('mapel.page.soalUjian.partial.form-soal')
+    </x-mapel-layout>
     @php
         $soal_ujian = json_decode($sesi->soal_ujian, true) ?? [];
     @endphp
@@ -24,6 +19,11 @@
 @push('script')
     <script>
         var id_soal = "{{ count($soal_ujian) }}";
+
+        $(document).on('input', 'textarea', function() {
+            this.style.height = 'auto'; // Setel tinggi ke auto agar textarea dapat menyesuaikan tingginya
+            this.style.height = (this.scrollHeight) + 'px'; // Atur tinggi textarea sesuai dengan tinggi kontennya
+        });
         
         $(document).on('click', '.btn-tambah-soal', function(){
             id_soal++;
@@ -34,13 +34,13 @@
                             <span class="label-text text-lg font-semibold">Soal ${id_soal}.</span>
                             <button type="button" class="btn btn-sm btn-error text-white btn-remove-soal" data-soal="${id_soal}">Hapus</button>
                         </div>
-                        <textarea placeholder="input soal" required name="soal[soal-${id_soal}][soal]" class="textarea textarea-bordered textarea-sm w-full max-h-[50px] bg-white"></textarea>
+                        <textarea style="resize: vertical;" placeholder="input soal" required name="soal[soal-${id_soal}][soal]" class="rounded-md p-2"></textarea>
                     </label>
                     <div class="flex flex-col gap-2 my-3">
                         <div class="form-control parent-opsiSoal-${id_soal}">
                             <label class="label cursor-pointer justify-start">
                                 <input type="radio" required name="soal[soal-${id_soal}][jawaban][]" for="opsi-${id_soal}" class="radio radio-primary radio-sm"/>
-                                <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
+                                <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-full md:w-[50%]">
                                 <button type="button" class="btn btn-xs btn-outline btn-circle border-2 remove-opsi-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
                                 </button>
@@ -59,7 +59,7 @@
             $('.parent-opsiSoal-'+id_soal).append(`
                 <label class="label cursor-pointer justify-start">
                     <input type="radio" required name="soal[soal-${id_soal}][jawaban][]" class="radio radio-primary radio-sm" for="opsi-${id_soal}"/>
-                    <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-[50%]">
+                    <input type="text" required placeholder="input jawaban" name="soal[soal-${id_soal}][opsi_soal][]" id="opsi-${id_soal}" class="input input-bordered input-sm mx-3 w-full md:w-[50%]">
                     <button type="button" class="btn btn-xs btn-outline btn-circle border-2 remove-opsi-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
                     </button>
@@ -84,6 +84,5 @@
             var value = el.val();
             el.prev().val(value);
         });
-
     </script>
 @endpush
