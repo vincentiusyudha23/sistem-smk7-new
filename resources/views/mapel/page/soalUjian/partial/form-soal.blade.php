@@ -1,4 +1,4 @@
-<div class="w-100 bg-gray-300 rounded-lg p-5">
+<div class="w-[100%] bg-gray-300 rounded-lg p-5" id="form-soal-container">
     <form id="form-soal-ujian" method="POST" action="{{ route('mapel.soal-ujian.store') }}">
         @csrf
         <input type="hidden" name="id_sesi" value="{{ $sesi->id }}">

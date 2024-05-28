@@ -8,7 +8,13 @@
 
 @section('content')
     <x-mapel-layout>
-        <h1 class="text-2xl font-bold my-2">Soal Ujian {{ auth()->user()->mapel->nama_mapel }}</h1>
+        <div class="inline-flex justify-between items-center w-full my-3">
+            <h1 class="text-2xl font-bold">Soal Ujian {{ auth()->user()->mapel->nama_mapel }}</h1>
+            <div>
+                <button type="button" class="btn btn-info btn-sm text-white btn-import-soal" data-id="{{ $sesi->id }}">Import Soal</button>
+                <div class="font-light text-sm"><sup>*</sup>Template Soal, <a href="{{ route('mapel.template_soal') }}" class="text-blue-600">Unduh</a></div>
+            </div>
+        </div>
         @include('mapel.page.soalUjian.partial.form-soal')
     </x-mapel-layout>
     @php
@@ -18,6 +24,62 @@
 
 @push('script')
     <script>
+
+        $(document).on('click', '.btn-import-soal', function(){
+                Swal.fire({
+                title: "Select File",
+                input: "file",
+                inputAttributes: {
+                    "accept": ".xls, .xlsx",
+                    "aria-label": "upload File Excel Anda"
+            }}).then( async (result) => {
+                if(result.value){
+                    const formData = new FormData();
+                    var id_sesi = $(this).data('id');
+                    formData.append('file_soal', result.value);
+                    formData.append('_token','{{ csrf_token() }}');
+                    formData.append('id_sesi', id_sesi);
+
+                    Swal.fire({
+                        title: 'Uploading...',
+                        text: 'Harap tunggu, kami sedang memproses file anda.',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    await $.ajax({
+                        url: '{{ route('mapel.import_soal') }}',
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function(response){
+                            Swal.hideLoading()
+                            if(response.type === "success"){
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: response.msg,
+                                    icon: 'success',
+                                }).then( () => {
+                                   $('#form-soal-container').html(response.render);
+                                });
+                            }
+                            if(response.type === "error"){
+                                Swal.fire({
+                                    title: 'Gagal',
+                                    html: response.msg,
+                                    icon: 'error',
+                                });
+                            }
+                        }
+                    });
+                };
+            });
+        });
+
         var id_soal = "{{ count($soal_ujian) }}";
 
         $(document).on('input', 'textarea', function() {

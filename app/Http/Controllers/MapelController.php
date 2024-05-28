@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\SesiUjian;
 use App\Models\HasilUjian;
+use App\Imports\SoalImport;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Models\SesiUjianKelas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
 class MapelController extends Controller
@@ -267,5 +270,41 @@ class MapelController extends Controller
         }catch(\Exception $e){
             return response()->json(['type'=>'error', 'msg' => $e->getMessage()]);
         }
+    }
+
+    public function import_soal(Request $request)
+    {
+        $request->validate([
+            'file_soal' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'id_sesi' => 'required'
+        ]);
+
+        if($request->hasFile('file_soal')){
+            $file = $request->file('file_soal');
+
+            Excel::import(new SoalImport, $file);
+
+            $soal = Session::get('soal_ujian');
+
+            if($soal){
+                $sesiUjian = SesiUjian::find($request->id_sesi);
+                $sesiUjian->update([
+                    'soal_ujian' => $soal
+                ]);
+                $sesi = SesiUjian::find($sesiUjian->id);
+                $render = View::make('mapel.page.soalUjian.partial.form-soal', compact('sesi'))->render();
+
+                return response()->json([
+                    'type' => 'success',
+                    'msg' => 'Berhasil Import Soal.',
+                    'render' => $render
+                ]);
+            }
+        }
+
+        return response()->json([
+            'type' => 'error',
+            'msg' => 'File tidak ditemukan / tidak valid'
+        ]);
     }
 }

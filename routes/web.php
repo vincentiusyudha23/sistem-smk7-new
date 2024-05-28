@@ -84,6 +84,8 @@ Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(functio
     Route::get('/hasil-ujian-siswa/{id}',[MapelController::class,'hasil_ujian_siswa'])->name('hasil-ujian-siswa');
     Route::get('/get-data-sesi/{id_mapel}', [DataController::class, 'getDataSesi'])->name('getDataSesi');
     Route::get('/get-data-hasil-ujian/{id}', [DataController::class, 'getHasilUjianSiswa'])->name('getHasilUjianSiswa');
+    Route::get('/template-soal', [DataController::class, 'template_soal'])->name('template_soal');
+    Route::post('/import_soal', [MapelController::class, 'import_soal'])->name('import_soal');
 });
 
 Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(function(){

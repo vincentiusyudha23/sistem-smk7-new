@@ -9,6 +9,7 @@ use App\Models\SesiUjian;
 use App\Models\HasilUjian;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
+use App\Exports\SoalTemplate;
 use App\Models\PresensiMasuk;
 use App\Exports\KelasTemplate;
 use App\Exports\SiswaTemplate;
@@ -119,6 +120,11 @@ class DataController extends Controller
     public function data_siswa()
     {
         return Excel::download(new SiswaDataExport, 'Data_siswa.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function template_soal()
+    {
+        return Excel::download(new SoalTemplate, 'Template_soal.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function getSesiUjian()
