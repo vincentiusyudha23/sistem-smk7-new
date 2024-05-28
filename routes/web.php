@@ -27,6 +27,9 @@ Route::middleware('guest')->group(function(){
     Route::prefix('admin')->as('admin.')->group(function(){
         Route::get('/login',[AdminController::class, 'login'])->name('login');
         Route::get('/register',[AdminController::class, 'register'])->name('register');
+        Route::get('/lupa-password',[AdminController::class, 'change_password'])->name('change_password');
+        Route::post('/submit_password',[AdminController::class, 'user_confirm'])->name('user_confirm');
+        Route::post('/confirm-password',[AdminController::class, 'change_password_admin'])->name('confirm-password');
     });
 
     Route::prefix('mapel')->as('mapel.')->group(function(){

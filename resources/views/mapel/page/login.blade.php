@@ -42,9 +42,9 @@
                            <span class="ms-3">Show Password</span> 
                        </label>
                     </div>
-                    <div class="w-full text-center my-5 text-blue-600">
+                    {{-- <div class="w-full text-center my-5 text-blue-600">
                         <a>Lupa Password?</a>
-                    </div>
+                    </div> --}}
                     <button type="submit" class="btn btn-primary mb-3 text-white text-lg w-full">Sign In</button>
                 </form>
             </div>

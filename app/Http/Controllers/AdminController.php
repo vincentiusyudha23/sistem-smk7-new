@@ -724,4 +724,50 @@ class AdminController extends Controller
         ]);
     }
 
+    public function change_password()
+    {
+        return view('admin.page.change-password');
+    }
+
+    public function user_confirm(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'email' => 'required'
+        ]);
+
+        try{
+            $user = User::where('username',$request->username)->where('email',$request->email)->first();
+
+            return view('admin.page.submit-password', compact('user'));
+
+        } catch (\Exception $ex){
+
+            return redirect()->back()->with('error','Username/Email Tidak valid.');
+        }
+    }
+
+    public function change_password_admin(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'password_confirmation' => 'required',
+            'id_user' => 'required'
+        ]);
+
+        try{
+            $user = User::find(decrypt($request->id_user));
+
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            return redirect()->route('admin.login');
+
+        } catch (\Exception $ex){
+
+            return redirect()->back()->with('error','Username/Email Tidak valid.');
+        }
+    }
+
 }
