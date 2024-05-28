@@ -40,7 +40,7 @@
                         formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
                         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
                     });
-                    $('.distance').text(distance);
+                    // $('.distance').text(distance);
                     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                         var id_siswa = "{{ auth()->user()->siswa->id_siswa }}";
                         if(token_masuk == decodedText){

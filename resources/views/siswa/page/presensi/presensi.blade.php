@@ -38,7 +38,7 @@
             <div id="reader" class="hidden">
                 
             </div>
-            <h1>Jarak kamu dari Sekolah : <span class="distance">0</span> Meter</h1>
+            {{-- <h1>Jarak kamu dari Sekolah : <span class="distance">0</span> Meter</h1> --}}
             {{-- Btn to Riwayat --}}
             <a href="{{ route('siswa.riwayat-presensi') }}" class="btn btn-active">Riwayat Presensi</a>
         </div>

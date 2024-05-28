@@ -28,6 +28,14 @@ class UpdateStatusUjian implements ShouldQueue
     public function handle(): void
     {
         $now = Carbon::now();
-        SesiUjian::whereDate('end','<=', $now)->where('status', 1)->update(['status' => 2]);
+        
+        SesiUjian::where('status', 0)
+            ->where('start', '<=', $now)
+            ->update(['status' => 1]);
+
+        // Mengakhiri sesi ujian
+        SesiUjian::where('status', 1)
+            ->where('end', '<=', $now)
+            ->update(['status' => 2]);
     }
 }
