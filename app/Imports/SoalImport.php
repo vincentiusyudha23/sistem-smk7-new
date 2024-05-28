@@ -20,6 +20,11 @@ class SoalImport implements ToCollection, WithHeadingRow
         $soal = [];
         $index = 1;
         foreach($rows as $row){
+
+            if(empty($row['Soal'])){
+                continue;
+            }
+            
             $soals = [
                 "soal" => $row['Soal'],
                 "opsi_soal" => [
