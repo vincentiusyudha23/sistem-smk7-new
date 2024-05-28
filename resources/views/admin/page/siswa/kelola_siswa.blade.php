@@ -207,6 +207,7 @@
                      { data: null, orderable: false, searchable: false },
                      {data: 'nama'},
                      {data: 'nis'},
+                     {data: 'jurusan'},
                      {data: 'kelas'},
                      {data: 'tanggal_lahir'},
                      {data: 'orang_tua'},

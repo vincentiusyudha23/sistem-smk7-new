@@ -5,6 +5,7 @@
             <th>No.</th>
             <th>Nama Siswa</th>
             <th>Nis</th>
+            <th>Jurusan</th>
             <th>Kelas</th>
             <th>Tanggal Lahir</th>
             <th>Orang Tua</th>

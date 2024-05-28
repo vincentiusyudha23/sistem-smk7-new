@@ -51,6 +51,7 @@ class DataController extends Controller
                 'nis' => $item->nis,
                 'username' => $item->users->username,
                 'password' => $item->password,
+                'jurusan' => $item->getKelas()?->jurusan ?? '',
                 'kelas' => $item->getKelas()?->nama_kelas ?? '',
                 'all_kelas' => $all_kelas,
                 'id_kelas' => $item->kelas?->id_kelas ?? '',
