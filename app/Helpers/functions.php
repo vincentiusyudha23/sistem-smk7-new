@@ -36,10 +36,16 @@ function getCapitalText($kelas)
     }
 }
 
-function getKelasSiswa($kelas)
+function getKelasSiswa($kelas, $option = null)
 {
     $kelas = KelasJurusan::where('id_kelas',$kelas)->first();
-    $nama_kelas = $kelas?->nama_kelas ?? '';
+    if($option === 'kelas'){
+        $nama_kelas = $kelas?->kelas ?? '';
+    }else if($option === 'jurusan'){
+        $nama_kelas = $kelas?->jurusan ?? '';
+    } else {
+        $nama_kelas = $kelas?->nama_kelas ?? '';
+    }
     return $nama_kelas;
 }
 

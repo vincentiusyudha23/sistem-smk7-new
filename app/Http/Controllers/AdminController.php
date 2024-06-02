@@ -17,6 +17,7 @@ use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Models\PresensiMasuk;
 use App\Models\PresensiPulang;
+use App\Exports\PresensiExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -115,7 +116,7 @@ class AdminController extends Controller
 
     public function presensi()
     {
-         $dataPresensiPerHari = [];
+        $dataPresensiPerHari = [];
 
         for ($i = 0; $i < 7; $i++) {
             // Mengambil tanggal yang sesuai
@@ -128,7 +129,84 @@ class AdminController extends Controller
             $dataPresensiPerHari[$tanggal->isoFormat('dddd, DD/MM/YYYY')] = $presensiMasuk;
         }
 
-        return view('admin.page.presensi.kelola_presensi', compact('dataPresensiPerHari'));
+        $siswas = Siswa::orderBy('nama', 'asc')->pluck('nama', 'id_siswa')->toArray();
+        
+        $kelas = KelasJurusan::orderBy('created_at', 'desc')->pluck('nama_kelas', 'id_kelas')->toArray();
+
+        $jurusans = KelasJurusan::select('jurusan')->distinct()->pluck('jurusan')->toArray();
+
+        return view('admin.page.presensi.kelola_presensi', compact('dataPresensiPerHari','siswas','kelas','jurusans'));
+    }
+
+    public function download_data_presensi(Request $request)
+    {
+        $options = $request->options ?? 0;
+
+        $presensi = PresensiMasuk::orderBy('created_at', 'desc');
+
+        if($options == 0){
+            $presensi = $presensi->get();
+        }
+
+        if($options == 1){
+            $from_date = $request->dateFrom;
+            $to_date = $request->dateTo;
+
+            $presensi = $presensi->whereBetween('created_at', [$from_date, $to_date])->get();
+        }
+
+        if($options == 2){
+            $siswa = $request->siswa;
+            $data = $presensi->whereIn('id_siswa', $siswa);
+            if($request->has('dateFrom') && $request->has('dateTo') && $request->dateFrom !== null && $request->dateTo !== null){
+                $from_date = $request->dateFrom;
+                $to_date = $request->dateTo;
+                $presensi = $data->whereBetween('created_at', [$from_date, $to_date])->get();
+            } else {
+                $presensi = $data->get();
+            }
+        }
+
+        if($options == 3){
+            $kelas = $request->kelas;
+            $siswa = KelasSiswa::whereIn('id_kelas',$kelas)->pluck('id_siswa')->toArray();
+            $data = $presensi->whereIn('id_siswa', $siswa);
+            if($request->has('dateFrom') && $request->has('dateTo') && $request->dateFrom !== null && $request->dateTo !== null){
+                $from_date = $request->dateFrom;
+                $to_date = $request->dateTo;
+                $presensi = $data->whereBetween('created_at', [$from_date, $to_date])->get();
+            } else {
+                $presensi = $data->get();
+            }
+        }
+
+        if($options == 4){
+            $jurusan = $request->jurusan;
+            $kelas = KelasJurusan::whereIn('jurusan', $jurusan)->pluck('id_kelas', 'nama_kelas')->toArray();
+            $siswa = KelasSiswa::whereIn('id_kelas',$kelas)->pluck('id_siswa')->toArray();
+            $data = $presensi->whereIn('id_siswa', $siswa);
+            if($request->has('dateFrom') && $request->has('dateTo') && $request->dateFrom !== null && $request->dateTo !== null){
+                $from_date = $request->dateFrom;
+                $to_date = $request->dateTo;
+                $presensi = $data->whereBetween('created_at', [$from_date, $to_date])->get();
+            } else {
+                $presensi = $data->get();
+            }
+        }
+
+        $transform = $presensi->map(function($item){
+            return [
+                'tanggal' => $item->created_at->format('d/m/Y'),
+                'nama_siswa' => $item->siswa?->nama ?? '',
+                'nis' => $item->siswa?->nis ?? '',
+                'kelas' => getKelasSiswa($item->siswa?->kelas?->id_kelas, 'kelas'),
+                'nama_kelas' => getKelasSiswa($item->siswa?->kelas?->id_kelas),
+                'jurusan' => getKelasSiswa($item->siswa?->kelas?->id_kelas, 'jurusan'),
+                'status' => $item->status
+            ];
+        });
+
+        return Excel::download(new PresensiExport($transform), 'Presensi Siswa.xlsx');
     }
 
     public function detail_presensi($id)

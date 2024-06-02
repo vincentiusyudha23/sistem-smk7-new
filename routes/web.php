@@ -63,6 +63,7 @@ Route::middleware(['web','admin'])->prefix('admin')->as('admin.')->group(functio
     Route::post('/import_kelas',[AdminController::class, 'import_kelas'])->name('kelas.import');
     Route::get('/delete_kelas',[AdminController::class, 'delete_kelas'])->name('kelas.delete');
     Route::get('/detail_presensi/{id}',[AdminController::class, 'detail_presensi'])->name('detail_presensi');
+    Route::post('/download-presensi',[AdminController::class, 'download_data_presensi'])->name('download.presensi');
 
     // DataController
     Route::get('/get-data-kelas',[DataController::class, 'getDataKelas'])->name('getDataKelas');
