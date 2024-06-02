@@ -9,6 +9,7 @@ use App\Imports\SoalImport;
 use App\Models\KelasJurusan;
 use Illuminate\Http\Request;
 use App\Models\SesiUjianKelas;
+use App\Exports\HasilUjianExport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -306,5 +307,24 @@ class MapelController extends Controller
             'type' => 'error',
             'msg' => 'File tidak ditemukan / tidak valid'
         ]);
+    }
+
+    public function export_hasil_ujian($id)
+    {
+        $hasil_ujians = HasilUjian::where('id_sesi_ujian', $id)->with(['siswa'])->orderBy('created_at', 'desc')->get();
+
+        $hasil_ujians = $hasil_ujians->map(function($item){
+            return [
+                'nama_siswa' => $item->siswa->nama,
+                'nis' => $item->siswa->nis,
+                'nilai' => (string) $item->nilai,
+                'kelas' => getKelasSiswa($item->siswa?->kelas?->id_kelas, 'kelas'),
+                'nama_kelas' => getKelasSiswa($item->siswa?->kelas?->id_kelas),
+                'jurusan' => getKelasSiswa($item->siswa?->kelas?->id_kelas, 'jurusan'),
+                'tanggal' => $item->sesi_ujian->tanggal_ujian->format('d/m/Y')
+            ];
+        });
+        // dd($hasil_ujians);
+        return Excel::download(new HasilUjianExport($hasil_ujians), 'Hasil Ujian Siswa.xlsx');
     }
 }

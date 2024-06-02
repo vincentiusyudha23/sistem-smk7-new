@@ -90,6 +90,7 @@ Route::middleware(['web','mapel'])->prefix('mapel')->as('mapel.')->group(functio
     Route::get('/get-data-hasil-ujian/{id}', [DataController::class, 'getHasilUjianSiswa'])->name('getHasilUjianSiswa');
     Route::get('/template-soal', [DataController::class, 'template_soal'])->name('template_soal');
     Route::post('/import_soal', [MapelController::class, 'import_soal'])->name('import_soal');
+    Route::get('/download-excel/{id}', [MapelController::class, 'export_hasil_ujian'])->name('export_hasil_ujian');
 });
 
 Route::middleware(['web','siswa'])->prefix('siswa')->as('siswa.')->group(function(){

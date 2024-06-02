@@ -40,7 +40,7 @@ function getKelasSiswa($kelas, $option = null)
 {
     $kelas = KelasJurusan::where('id_kelas',$kelas)->first();
     if($option === 'kelas'){
-        $nama_kelas = $kelas?->kelas ?? '';
+        $nama_kelas = getCapitalText($kelas?->kelas);
     }else if($option === 'jurusan'){
         $nama_kelas = $kelas?->jurusan ?? '';
     } else {

@@ -8,16 +8,19 @@
 
 @section('content')
     <x-mapel-layout>
-        <div class="inline-flex justify-between w-full items-center mb-5">
+        <div class="inline-flex justify-between w-full items-center my-5">
             <h1 class="text-2xl font-bold">List Hasil Ujian {{ $sesi->mapel->nama_mapel }}</h1>
-            <a href="{{ route('mapel.hasil-ujian') }}" class="btn btn-sm btn-error text-white">Kembali</a>
+            <div class="flex justify-center items-center gap-1">
+                <a href="{{ route('mapel.export_hasil_ujian', [ 'id' => $sesi->id]) }}" class="btn btn-info btn-sm text-white">Unduh Hasil Ujian</a>
+                <a href="{{ route('mapel.hasil-ujian') }}" class="btn btn-sm btn-error text-white">Kembali</a>
+            </div>
         </div>
         <div class="p-2 bg-slate-200 rounded-md flex flex-col md:flex-row gap-3 justify-center md:justify-between items-center">
             <ul >
                 <li>Nama Mata Pelajaran : {{ $sesi->mapel->nama_mapel }}</li>
                 <li>Tanggal Ujian       : {{ $sesi->tanggal_ujian->format('d/m/Y') }}</li>
-                <li>Start               : {{ $sesi->start }}</li>
-                <li>End                 : {{ $sesi->end }}</li>
+                <li>Start               : {{ $sesi->start->format('H:i') }}</li>
+                <li>End                 : {{ $sesi->end->format('H:i') }}</li>
             </ul>
             <div>
                 <h1 id="countdown" class="text-2xl font-bold"></h1>
@@ -60,12 +63,12 @@
                 $('#countdown').html(hours + ":" + minutes + ":" + seconds);
             }
 
-            var endTime = new Date("<?php echo $sesi->end; ?>").getTime(); // Mendapatkan waktu selesai dari PHP
+            var endTime = new Date("<?php echo $sesi->end; ?>").getTime(); 
 
             var timerInterval = setInterval(function() {
                 updateCountdown(endTime);
 
-                // Jika waktu selesai, hentikan interval dan lakukan permintaan AJAX untuk memperbarui status
+                
                 if (endTime <= new Date().getTime()) {
                     clearInterval(timerInterval);
                      $('#countdown').text('Ujian Selesai');
